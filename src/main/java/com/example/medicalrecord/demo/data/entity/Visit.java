@@ -1,10 +1,13 @@
 package com.example.medicalrecord.demo.data.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.print.Doc;
 import java.time.LocalDate;
-
+@Getter
+@Setter
 @Entity
 public class Visit extends BaseEntity {
 

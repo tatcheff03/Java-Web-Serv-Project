@@ -3,11 +3,15 @@ package com.example.medicalrecord.demo.data.entity;
 
 import com.example.medicalrecord.demo.data.Enum.Specialization;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 public class Doctor extends BaseEntity {
 
     private  String doctorName;

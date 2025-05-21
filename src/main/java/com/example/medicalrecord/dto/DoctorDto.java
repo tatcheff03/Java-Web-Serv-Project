@@ -3,12 +3,14 @@ package com.example.medicalrecord.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.example.medicalrecord.data.Enum.Specialization;
+
 import java.util.Set;
 
 @Getter
 @Setter
 public class DoctorDto {
     private  Long id;
-    private String name;
-    private Set <String> Specialization;
+    private String doctorName;
+    private Set<Specialization> specializations;
 }

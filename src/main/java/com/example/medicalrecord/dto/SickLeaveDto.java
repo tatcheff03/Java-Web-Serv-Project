@@ -11,6 +11,6 @@ public class SickLeaveDto {
     private Long id;
     private LocalDate startDate;
     private int dayDuration;
-
+    private PatientDto patient;
     private DoctorDto issuedBy;
 }

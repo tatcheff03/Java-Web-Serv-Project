@@ -2,21 +2,34 @@ package com.example.medicalrecord.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-
+    // 🔓 1. API – без login
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         http
+                .securityMatcher("/api/**") // само за API
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+
+        return http.build();
+    }
+
+    // 🔐 2. Web – OAuth2 login
+    @Bean
+    @Order(2)
+    public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
+        http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/unauthorized").permitAll()
                         .anyRequest().authenticated()
@@ -25,20 +38,13 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessHandler((request, response, authentication) -> {
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-
                                 new SecurityContextLogoutHandler().logout(request, response, authentication);
-
-
                                 String idToken = oidcUser.getIdToken().getTokenValue();
-
-
                                 String logoutUrl = "http://localhost:8080/realms/medical-record/protocol/openid-connect/logout"
                                         + "?id_token_hint=" + idToken
-                                        + "&post_logout_redirect_uri=http://localhost:8081/oauth2/authorization/keycloak";
-
+                                        + "&post_logout_redirect_uri=http://localhost:8081/";
                                 response.sendRedirect(logoutUrl);
                             } else {
-
                                 response.sendRedirect("/");
                             }
                         })
@@ -50,3 +56,5 @@ public class SecurityConfig {
         return http.build();
     }
 }
+
+

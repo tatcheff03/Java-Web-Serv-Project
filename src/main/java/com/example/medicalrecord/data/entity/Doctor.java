@@ -16,7 +16,8 @@ import java.util.Set;
 public class Doctor extends BaseEntity {
 
     private  String doctorName;
-    private  boolean isPersonalDoc;
+    @Column(name = "is_personal_doc")
+    private  boolean personalDoc;
 
     @OneToMany(mappedBy = "personalDoctor")
     private Set<Patient> patients = new HashSet<>();

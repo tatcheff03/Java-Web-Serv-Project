@@ -19,6 +19,9 @@ public class SickLeave extends BaseEntity{
     private int dayDuration;
 
     @ManyToOne
+    private Patient patient;
+
+    @ManyToOne
     @JoinColumn(name = "issued_by_id", nullable = false)
     private Doctor issuedBy;
 }

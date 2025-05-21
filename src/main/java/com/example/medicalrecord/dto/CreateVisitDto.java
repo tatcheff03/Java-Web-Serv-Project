@@ -2,14 +2,16 @@ package com.example.medicalrecord.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.cglib.core.Local;
+
+
+import java.time.LocalDate;
 
 @Getter
 @Setter
 public class CreateVisitDto {
 private Long doctorId;
 private Long patientId;
-private Local localDate;
+private LocalDate localDate;
 private Long diagnosisId;
 
 

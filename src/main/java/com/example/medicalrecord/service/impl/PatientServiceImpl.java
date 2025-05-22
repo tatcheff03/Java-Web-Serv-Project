@@ -24,6 +24,8 @@ public class PatientServiceImpl implements PatientService {
         Doctor doctor = doctorRepository.findById(createpatientDto.getPersonalDoctorId())
                         . orElseThrow(() -> new RuntimeException("Doctor not found"));
         Patient patient = mapperUtil.map(createpatientDto, Patient.class);
+        patient.setId(null);
+        patient.setEgn(createpatientDto.getEgn());
         patient.setPersonalDoctor(doctor);
         Patient savedPatient = patientRepository.save(patient);
         return mapperUtil.map(savedPatient, PatientDto.class);

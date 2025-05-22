@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class CreatePatientDto {
     private String patientName;
-    private long EGN;
+    private String egn;
     private boolean hasPaidInsuranceLastSixMonths;
     private long personalDoctorId;
 }

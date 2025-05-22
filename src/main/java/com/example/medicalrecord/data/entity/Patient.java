@@ -1,5 +1,6 @@
 package com.example.medicalrecord.data.entity;
 
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -12,7 +13,7 @@ import lombok.Setter;
 public class Patient extends BaseEntity {
 
     private String patientName;
-    private long EGN;
+    private String egn;
     private boolean hasPaidInsuranceLastSixMonths;
 
     @ManyToOne

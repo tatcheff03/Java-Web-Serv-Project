@@ -30,6 +30,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
         SickLeave sickLeave = mapperUtil.map(dto, SickLeave.class);
+        sickLeave.setId(null);
         sickLeave.setPatient(patient);
         sickLeave.setIssuedBy(doctor);
 

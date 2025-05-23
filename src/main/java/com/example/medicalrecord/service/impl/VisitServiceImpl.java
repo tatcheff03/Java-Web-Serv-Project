@@ -9,6 +9,7 @@ import com.example.medicalrecord.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,9 @@ public class VisitServiceImpl implements VisitService {
     private final PatientRepository patientRepository;
     private final DiagnosisRepository diagnosisRepository;
     private final MapperUtil mapperUtil;
-
+    private final MedicineRepository medicineRepository;
+    private final SickLeaveRepository sickLeaveRepository;
+    private final TreatmentRepository treatmentRepository;
 
 
     @Override
@@ -87,4 +90,82 @@ public class VisitServiceImpl implements VisitService {
         }
         visitRepository.deleteById(id);
     }
+
+    @Override
+    public VisitDto addTreatment(Long visitId, CreateTreatmentDto dto) {
+        Visit visit = visitRepository.findById(visitId).orElseThrow();
+
+        Treatment treatment = mapperUtil.map(dto, Treatment.class);
+
+        Set<Medicine> meds = dto.getMedicationIds().stream()
+                .map(id -> medicineRepository.findById(id).orElseThrow())
+                .collect(Collectors.toSet());
+
+        treatment.setMedications(meds);
+        visit.setTreatment(treatment);
+
+        return mapperUtil.map(visitRepository.save(visit), VisitDto.class);
+    }
+
+    @Override
+    public VisitDto addSickLeave(Long visitId, CreateSickLeaveDto dto) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        SickLeave sickLeave;
+
+        if (visit.getSickLeave() != null) {
+
+            sickLeave = visit.getSickLeave();
+        } else {
+
+            sickLeave = new SickLeave();
+        }
+
+        sickLeave.setStartDate(dto.getStartDate());
+        sickLeave.setDayDuration(dto.getDayDuration());
+
+        Doctor issuedBy = doctorRepository.findById(dto.getIssuedById())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        Patient patient = patientRepository.findById(dto.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
+        sickLeave.setIssuedBy(issuedBy);
+        sickLeave.setPatient(patient);
+
+        visit.setSickLeave(sickLeave);
+        visitRepository.save(visit);
+
+        return mapperUtil.map(visit, VisitDto.class);
+    }
+
+    @Override
+    public VisitDto attachSickLeave(Long visitId, Long sickLeaveId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        SickLeave sickLeave = sickLeaveRepository.findById(sickLeaveId)
+                .orElseThrow(() -> new RuntimeException("SickLeave not found"));
+
+        visit.setSickLeave(sickLeave);
+        return mapperUtil.map(visitRepository.save(visit), VisitDto.class);
+    }
+    @Override
+    public VisitDto attachTreatment(Long visitId, Long treatmentId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        Treatment treatment = treatmentRepository.findById(treatmentId)
+                .orElseThrow(() -> new RuntimeException("Treatment not found"));
+
+        visit.setTreatment(treatment);
+
+        return mapperUtil.map(visitRepository.save(visit), VisitDto.class);
+    }
+
+
+
 }
+
+

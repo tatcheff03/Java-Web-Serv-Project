@@ -32,18 +32,16 @@ public class MapperUtil {
 
     @PostConstruct
     public void configure() {
-        // 🔧 Глобални настройки
+
         modelMapper.getConfiguration()
                 .setAmbiguityIgnored(true)
                 .setFieldMatchingEnabled(true)
                 .setSkipNullEnabled(true);
 
-        // --- CREATE DTO -> Entity ---
-        modelMapper.createTypeMap(CreatePatientDto.class, Patient.class)
-                .addMappings(mapper -> mapper.skip(Patient::setId));
 
-        modelMapper.createTypeMap(CreateDoctorDto.class, Doctor.class)
-                .addMappings(mapper -> mapper.skip(Doctor::setId));
+        modelMapper.createTypeMap(CreatePatientDto.class, Patient.class);
+
+        modelMapper.createTypeMap(CreateDoctorDto.class, Doctor.class);
 
         modelMapper.createTypeMap(CreateDiagnosisDto.class, Diagnosis.class)
                 .addMappings(mapper -> mapper.skip(Diagnosis::setId));
@@ -54,50 +52,25 @@ public class MapperUtil {
         modelMapper.createTypeMap(CreateTreatmentDto.class, Treatment.class)
                 .addMappings(mapper -> mapper.skip(Treatment::setId));
 
-        modelMapper.createTypeMap(CreateSickLeaveDto.class, SickLeave.class)
-                .addMappings(mapper -> {
-                    mapper.skip(SickLeave::setId);
+        modelMapper.createTypeMap(CreateSickLeaveDto.class, SickLeave.class);
+        modelMapper.createTypeMap(CreateVisitDto.class, Visit.class);
 
-                });
-
-        modelMapper.createTypeMap(CreateVisitDto.class, Visit.class)
-                .addMappings(mapper -> {
-                    mapper.skip(Visit::setId);
-
-                });
-
-        // --- Entity -> DTO и обратно ---
         modelMapper.createTypeMap(Diagnosis.class, DiagnosisDto.class);
         modelMapper.createTypeMap(DiagnosisDto.class, Diagnosis.class)
                 .addMappings(mapper -> mapper.skip(Diagnosis::setId));
 
-        modelMapper.createTypeMap(Patient.class, PatientDto.class)
-                .addMappings(mapper -> mapper.skip(PatientDto::setId));
+        modelMapper.createTypeMap(Patient.class, PatientDto.class);
 
-        modelMapper.createTypeMap(Doctor.class, DoctorDto.class)
-                .addMappings(mapper -> mapper.skip(DoctorDto::setId));
+        modelMapper.createTypeMap(Doctor.class, DoctorDto.class);
 
-        modelMapper.createTypeMap(Treatment.class, TreatmentDto.class)
-                .addMappings(mapper -> mapper.skip(TreatmentDto::setId));
+        modelMapper.createTypeMap(Treatment.class, TreatmentDto.class);
 
-        modelMapper.createTypeMap(SickLeave.class, SickLeaveDto.class)
-                .addMappings(mapper -> {
-                    mapper.skip(SickLeaveDto::setId);
+        modelMapper.createTypeMap(SickLeave.class, SickLeaveDto.class);
 
-                });
-
-        modelMapper.createTypeMap(SickLeaveDto.class, SickLeave.class)
-                .addMappings(mapper -> {
-                    mapper.skip(SickLeave::setId);
-
-                });
+        modelMapper.createTypeMap(SickLeaveDto.class, SickLeave.class);
 
 
-        modelMapper.createTypeMap(VisitDto.class, Visit.class)
-                .addMappings(mapper -> {
-                    mapper.skip(Visit::setId);
-
-                });
+        modelMapper.createTypeMap(VisitDto.class, Visit.class);
 
 
     }

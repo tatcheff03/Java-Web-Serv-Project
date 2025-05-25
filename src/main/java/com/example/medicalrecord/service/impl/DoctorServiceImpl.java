@@ -31,7 +31,11 @@ public class DoctorServiceImpl implements DoctorService {
     public List<DoctorDto> getAllDoctors() {
         return doctorRepository.findAll()
                 .stream()
-                .map(doctor -> mapperUtil.map(doctor, DoctorDto.class))
+                .map(doctor -> {
+                    DoctorDto dto = mapperUtil.map(doctor, DoctorDto.class);
+                    dto.setPatientCount(doctor.getPatients().size());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 

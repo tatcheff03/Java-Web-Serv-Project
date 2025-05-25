@@ -1,4 +1,4 @@
-package com.example.medicalrecord.web.view.controller;
+package com.example.medicalrecord.web.api;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;

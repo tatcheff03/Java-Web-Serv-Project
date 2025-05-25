@@ -1,18 +1,15 @@
-package com.example.medicalrecord.dto;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.example.medicalrecord.web.view.controller.model;
 
 import com.example.medicalrecord.data.Enum.Specialization;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Getter
 @Setter
-public class DoctorDto {
-    private  Long id;
+public class CreateDoctorViewModel {
     private String doctorName;
     private boolean personalDoc;
-    private int patientCount;
     private Set<Specialization> specializations;
 }

@@ -37,9 +37,13 @@ public class MedicineServiceImpl  implements MedicineService {
     }
 
     @Override
-    public MedicineDto updateMedicine(Long id, CreateMedicineDto createMedicineDto) {
-        Medicine med=medicineRepository.findById(id).orElseThrow(() -> new RuntimeException("Medicine doesn't exist"));
-        mapperUtil.map(createMedicineDto, med);
+    public MedicineDto updateMedicine(MedicineDto dto) {
+        Medicine med = medicineRepository.findById(dto.getId())
+                .orElseThrow(() -> new RuntimeException("Medicine doesn't exist"));
+
+        med.setMedicineName(dto.getMedicineName());
+        med.setDosage(dto.getDosage());
+
         Medicine updatedMedicine = medicineRepository.save(med);
         return mapperUtil.map(updatedMedicine, MedicineDto.class);
     }

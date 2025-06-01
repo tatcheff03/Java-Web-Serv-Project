@@ -12,19 +12,18 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 @Configuration
 public class SecurityConfig {
 
-    // 🔓 1. API – без login
     @Bean
     @Order(1)
     public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/api/**") // само за API
+                .securityMatcher("/api/**")
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
 
         return http.build();
     }
 
-    // 🔐 2. Web – OAuth2 login
+
     @Bean
     @Order(2)
     public SecurityFilterChain webSecurity(HttpSecurity http) throws Exception {
@@ -35,6 +34,9 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(Customizer.withDefaults())
+                .exceptionHandling(exception->exception
+                        .accessDeniedPage("/unauthorized")
+                )
                 .logout(logout -> logout
                         .logoutSuccessHandler((request, response, authentication) -> {
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {

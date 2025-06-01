@@ -1,9 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <title>Welcome</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
 </head>
-<body>
-<h1 th:text="${welcome}">Welcome!</h1>
+<body class="bg-light">
+<div class="container mt-5 text-center">
+    <h1 class="mb-4" th:text="${welcome}">Welcome!</h1>
+
+    <div class="d-grid gap-3 col-6 mx-auto">
+        <a th:href="@{/doctors}" class="btn btn-primary btn-lg"> Doctors</a>
+        <a th:href="@{/diagnoses}" class="btn btn-warning btn-lg text-dark"> Diagnoses</a>
+        <a th:href="@{/medicines}" class="btn btn-success btn-lg"> Medicines</a>
+        <a th:href="@{/patients}" class="btn btn-info btn-lg text-dark"> Patients</a>
+    </div>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
 </body>
 </html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit medicine</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Edit medicine</h1>
+
+    <form th:action="@{/medicines/edit}" th:object="${medicine}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group mb-4">
+            <label for="medicineName">Name:</label>
+            <input type="text" id="medicineName" th:field="*{medicineName}" class="form-control"/>
+        </div>
+
+        <div class="form-group mb-4">
+            <label for="dosage">Dosage:</label>
+            <input type="text" id="dosage" th:field="*{dosage}" class="form-control"/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a th:href="@{/medicines}" class="btn btn-secondary">Back to list </a>
+    </form>
+</div>
+
+<script th:src="@{/js/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

@@ -13,7 +13,7 @@ public interface MedicineService {
 
     MedicineDto getMedicineById(Long id);
 
-    MedicineDto updateMedicine(Long id, CreateMedicineDto createMedicineDto);
+    MedicineDto updateMedicine(MedicineDto medicineDto);
 
     void deleteMedicine(Long id);
 }

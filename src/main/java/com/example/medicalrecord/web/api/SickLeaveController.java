@@ -45,4 +45,17 @@ public class SickLeaveController {
         sickLeaveService.deleteSickLeave(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/deleted")
+    public ResponseEntity<List<SickLeaveDto>> getAllDeleted() {
+        List<SickLeaveDto> deletedSickLeaves = sickLeaveService.getAllDeletedSickLeaves();
+        return ResponseEntity.ok(deletedSickLeaves);
+    }
+
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<Void> restore(@PathVariable Long id) {
+        sickLeaveService.restoreSickLeave(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

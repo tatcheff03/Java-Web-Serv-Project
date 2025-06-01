@@ -19,6 +19,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
     private final SickLeaveRepository sickLeaveRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final VisitRepository visitRepository;
     private final MapperUtil mapperUtil;
 
 
@@ -40,7 +41,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
 
     @Override
     public List<SickLeaveDto> getAllSickLeaves() {
-        return sickLeaveRepository.findAll()
+        return sickLeaveRepository.findAllByDeletedFalse()
                 .stream()
                 .map(s -> mapperUtil.map(s, SickLeaveDto.class))
                 .collect(Collectors.toList());
@@ -58,13 +59,12 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         SickLeave sickLeave = sickLeaveRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("SickLeave not found"));
 
-        Patient patient = patientRepository.findById(dto.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
         Doctor doctor = doctorRepository.findById(dto.getIssuedById())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        mapperUtil.map(dto, sickLeave);
-        sickLeave.setPatient(patient);
+
+        sickLeave.setStartDate(dto.getStartDate());
+        sickLeave.setDayDuration(dto.getDayDuration());
         sickLeave.setIssuedBy(doctor);
 
         SickLeave updated = sickLeaveRepository.save(sickLeave);
@@ -73,9 +73,33 @@ public class SickLeaveServiceImpl implements SickLeaveService {
 
     @Override
     public void deleteSickLeave(Long id) {
-        if (!sickLeaveRepository.existsById(id)) {
-            throw new RuntimeException("SickLeave not found");
+        SickLeave sickLeave = sickLeaveRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sick leave with ID " + id + " not found."));
+
+        if (visitRepository.existsBySickLeaveId(id)) {
+            sickLeave.setDeleted(true);
+            sickLeaveRepository.save(sickLeave);
+            throw new RuntimeException("Cannot hard-delete: sick leave is linked to a visit and was soft-deleted instead.");
         }
+
         sickLeaveRepository.deleteById(id);
     }
+
+
+    @Override
+    public List<SickLeaveDto> getAllDeletedSickLeaves() {
+        return sickLeaveRepository.findAllByDeletedTrue()
+                .stream()
+                .map(s -> mapperUtil.map(s, SickLeaveDto.class))
+                .toList();
+    }
+
+    @Override
+    public void restoreSickLeave(Long id) {
+        SickLeave sickLeave = sickLeaveRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("SickLeave not found"));
+        sickLeave.setDeleted(false);
+        sickLeaveRepository.save(sickLeave);
+    }
+
 }

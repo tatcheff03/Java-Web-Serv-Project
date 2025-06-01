@@ -53,14 +53,14 @@ public class DoctorViewController {
         CreateDoctorViewModel viewModel = mapperUtil.map(dto, CreateDoctorViewModel.class);
         model.addAttribute("doctor", viewModel);
         model.addAttribute("specializations", Specialization.values());
-        model.addAttribute("id", id);
+
         return "doctor/doctoredit";
     }
 
-    @PostMapping("/edit/{id}")
-    public String update(@PathVariable Long id, @ModelAttribute("doctor") CreateDoctorViewModel updateModel) {
+    @PostMapping("/edit")
+    public String update(@ModelAttribute("doctor") CreateDoctorViewModel updateModel) {
         CreateDoctorDto dto = mapperUtil.map(updateModel, CreateDoctorDto.class);
-        doctorService.updateDoctor(id, dto);
+        doctorService.updateDoctor(updateModel.getId(), dto);
         return "redirect:/doctors";
     }
 

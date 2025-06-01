@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Sick Leave</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1>Create Sick Leave</h1>
+
+    <form th:action="@{/sick-leaves/create}" th:object="${sickLeave}" method="post">
+        <div class="mb-3">
+            <label class="form-label">Start Date:</label>
+            <input type="date" th:field="*{startDate}" class="form-control" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Duration (days):</label>
+            <input type="number" th:field="*{dayDuration}" class="form-control" min="1" required />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Patient:</label>
+            <select th:field="*{patientId}" class="form-select">
+                <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.name}"></option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Doctor:</label>
+            <select th:field="*{issuedById}" class="form-select">
+                <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.doctorName}"></option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a th:href="@{/sick-leaves}" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

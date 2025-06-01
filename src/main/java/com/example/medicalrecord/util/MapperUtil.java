@@ -53,6 +53,14 @@ public class MapperUtil {
                 .addMappings(mapper -> mapper.skip(Treatment::setId));
 
         modelMapper.createTypeMap(CreateSickLeaveDto.class, SickLeave.class);
+        if (modelMapper.getTypeMap(CreateSickLeaveDto.class, SickLeave.class) == null) {
+            modelMapper.createTypeMap(CreateSickLeaveDto.class, SickLeave.class)
+                    .addMappings(mapper -> {
+                        mapper.skip(SickLeave::setId);
+                        mapper.skip(SickLeave::setPatient);
+                        mapper.skip(SickLeave::setIssuedBy);
+                    });
+        }
         modelMapper.createTypeMap(CreateVisitDto.class, Visit.class);
 
         modelMapper.createTypeMap(Diagnosis.class, DiagnosisDto.class);
@@ -68,6 +76,8 @@ public class MapperUtil {
         modelMapper.createTypeMap(SickLeave.class, SickLeaveDto.class);
 
         modelMapper.createTypeMap(SickLeaveDto.class, SickLeave.class);
+
+
 
 
         modelMapper.createTypeMap(VisitDto.class, Visit.class);

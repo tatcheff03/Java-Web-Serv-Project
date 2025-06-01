@@ -9,6 +9,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class CreateDoctorViewModel {
+    private Long id;
     private String doctorName;
     private boolean personalDoc;
     private Set<Specialization> specializations;

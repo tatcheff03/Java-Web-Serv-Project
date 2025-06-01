@@ -3,6 +3,10 @@ package com.example.medicalrecord.data.repo;
 import com.example.medicalrecord.data.entity.SickLeave;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface SickLeaveRepository  extends JpaRepository<SickLeave, Long> {
+    List<SickLeave> findAllByDeletedFalse();
+    List<SickLeave> findAllByDeletedTrue();
 
 }

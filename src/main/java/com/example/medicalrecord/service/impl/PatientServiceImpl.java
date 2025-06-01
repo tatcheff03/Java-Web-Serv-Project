@@ -48,20 +48,23 @@ public class PatientServiceImpl implements PatientService {
             .orElseThrow(() -> new RuntimeException("Patient not found"));
     return mapperUtil.map(patient, PatientDto.class);
     }
-
     @Override
     public PatientDto updatePatient(Long id, CreatePatientDto createPatientDto) {
-    Patient patient = patientRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Patient not found"));
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+
         Doctor doctor = doctorRepository.findById(createPatientDto.getPersonalDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        mapperUtil.map(createPatientDto, patient);
+        patient.setPatientName(createPatientDto.getPatientName());
+        patient.setEgn(createPatientDto.getEgn());
+        patient.setHasPaidInsuranceLastSixMonths(createPatientDto.isHasPaidInsuranceLastSixMonths());
         patient.setPersonalDoctor(doctor);
 
         Patient updated = patientRepository.save(patient);
         return mapperUtil.map(updated, PatientDto.class);
     }
+
 
     @Override
     public void deletePatient(Long id) {

@@ -71,7 +71,7 @@ public class PatientViewController {
     @PostMapping("/edit")
     public String submitPatient(@ModelAttribute("patient") CreatePatientViewModel viewModel) {
         CreatePatientDto dto = mapperUtil.map(viewModel, CreatePatientDto.class);
-        patientService.updatePatient(viewModel.getPersonalDoctorId(), dto); // or use viewModel.getId() if you include ID
+        patientService.updatePatient(viewModel.getId(), dto);
         return "redirect:/patients";
     }
 }

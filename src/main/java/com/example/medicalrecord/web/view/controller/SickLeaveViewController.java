@@ -93,6 +93,23 @@ public class SickLeaveViewController {
         return "redirect:/sick-leaves";
     }
 
+    @GetMapping("/archived")
+    public String showArchivedSickLeaves(Model model) {
+        List<SickLeaveDto> deleted = sickLeaveService.getAllDeletedSickLeaves();
+        List<SickLeaveViewModel> viewModels = deleted.stream()
+                .map(dto -> mapperUtil.map(dto, SickLeaveViewModel.class))
+                .collect(Collectors.toList());
+        model.addAttribute("sickLeaves", viewModels);
+        return "sick-leaves/archived-sick-leaves";
+    }
+
+    @PostMapping("/restore/{id}")
+    public String restoreSickLeave(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        sickLeaveService.restoreSickLeave(id);
+        redirectAttributes.addFlashAttribute("successMessage", "Sick leave restored successfully.");
+        return "redirect:/sick-leaves";
+    }
 }
+
 
 

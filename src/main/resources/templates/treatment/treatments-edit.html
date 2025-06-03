@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Treatment</title>
+  <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <h1>Edit Treatment</h1>
+
+  <form th:action="@{'/treatment/edit/' + ${treatmentId}}" th:object="${treatment}" method="post">
+    <div class="mb-3">
+      <label class="form-label">Instructions:</label>
+      <input type="text" th:field="*{instructions}" class="form-control" required/>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Medications:</label>
+      <select th:field="*{medicationIds}" multiple class="form-select" size="5">
+        <option th:each="med : ${medicines}"
+                th:value="${med.id}"
+                th:text="${med.medicineName}"
+                th:selected="${medicines.contains(med.id)}">
+        </option>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a th:href="@{/treatment}" class="btn btn-secondary ms-2">← Cancel</a>
+  </form>
+</div>
+
+<script th:src="@{/js/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

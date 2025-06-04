@@ -65,4 +65,14 @@ public class VisitController {
         visitService.deleteVisit(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/deleted")
+    public ResponseEntity<List<VisitDto>> getAllDeleted() {
+        return ResponseEntity.ok(visitService.getAllDeletedVisits());
+    }
+
+    @PutMapping("/restore/{id}")
+    public ResponseEntity<Void> restore(@PathVariable Long id) {
+        visitService.restoreVisit(id);
+        return ResponseEntity.noContent().build();
+    }
 }

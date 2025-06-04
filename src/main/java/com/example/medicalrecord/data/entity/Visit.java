@@ -32,4 +32,7 @@ public class Visit extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "sick_leave_id")
     private SickLeave sickLeave;
+
+    @Column(nullable = false)
+    private boolean deleted= false;
 }

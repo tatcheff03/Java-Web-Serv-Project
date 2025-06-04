@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Visit</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>Edit Visit</h2>
+    <form th:action="@{/visits/edit}" th:object="${visit}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+        <div class="mb-3">
+            <label class="form-label">Doctor:</label>
+            <select th:field="*{doctorId}" class="form-select">
+                <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.doctorName}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Patient:</label>
+            <th:block th:each="p : ${patients}">
+                <input type="text" class="form-control" readonly th:if="${p.id} == ${visit.patientId}"
+                       th:value="${p.name}"/>
+            </th:block>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Date:</label>
+            <input type="date" th:field="*{localDate}" class="form-control"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Diagnosis:</label>
+            <select th:field="*{diagnosisId}" class="form-select">
+                <option th:each="d : ${diagnoses}" th:value="${d.id}" th:text="${d.diagnosisName}"></option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Treatment:</label>
+            <select th:field="*{treatmentId}" class="form-select">
+                <option value="">-- None --</option>
+                <option th:each="t : ${treatments}"
+                        th:value="${t.id}"
+                        th:text="${#strings.listJoin(t.medications, ', ') + ' – ' + t.instructions}">
+                </option>
+            </select>
+        </div>
+
+
+        <div class="mb-3">
+            <label class="form-label">Sick Leave:</label>
+            <input type="date" th:field="*{localDate}" class="form-control" required/>
+
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a th:href="@{/visits}" class="btn btn-secondary ms-2">← Cancel</a>
+    </form>
+</div>
+<script th:src="@{/js/jquery-3.5.1.min.js}"></script>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

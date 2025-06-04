@@ -18,4 +18,6 @@ public interface VisitService {
     VisitDto addSickLeave(Long visitId, CreateSickLeaveDto dto);
     VisitDto attachSickLeave(Long visitId, Long sickLeaveId);
     VisitDto attachTreatment(Long visitId, Long treatmentId);
+    List<VisitDto> getAllDeletedVisits();
+    void restoreVisit(Long id);
 }

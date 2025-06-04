@@ -37,11 +37,25 @@ public class VisitServiceImpl implements VisitService {
         Diagnosis diagnosis = diagnosisRepository.findById(dto.getDiagnosisId())
                 .orElseThrow(() -> new RuntimeException("Diagnosis not found"));
 
+
+
         Visit visit = new Visit();
         visit.setDoctor(doctor);
         visit.setPatient(patient);
         visit.setDiagnosis(diagnosis);
         visit.setLocalDate(dto.getLocalDate());
+
+        if (dto.getTreatmentId() != null) {
+            Treatment treatment = treatmentRepository.findById(dto.getTreatmentId())
+                    .orElseThrow(() -> new RuntimeException("Treatment not found"));
+            visit.setTreatment(treatment);
+        }
+
+        if (dto.getSickLeaveId() != null) {
+            SickLeave sickLeave = sickLeaveRepository.findById(dto.getSickLeaveId())
+                    .orElseThrow(() -> new RuntimeException("SickLeave not found"));
+            visit.setSickLeave(sickLeave);
+        }
 
         Visit saved = visitRepository.save(visit);
         return mapperUtil.map(saved, VisitDto.class);
@@ -49,7 +63,7 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public List<VisitDto> getAllVisits() {
-        return visitRepository.findAll()
+        return visitRepository.findAllByDeletedFalse()
                 .stream()
                 .map(v -> mapperUtil.map(v, VisitDto.class))
                 .collect(Collectors.toList());
@@ -69,15 +83,29 @@ public class VisitServiceImpl implements VisitService {
 
         Doctor doctor = doctorRepository.findById(dto.getDoctorId())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
-        Patient patient = patientRepository.findById(dto.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
         Diagnosis diagnosis = diagnosisRepository.findById(dto.getDiagnosisId())
                 .orElseThrow(() -> new RuntimeException("Diagnosis not found"));
 
         visit.setDoctor(doctor);
-        visit.setPatient(patient);
         visit.setDiagnosis(diagnosis);
         visit.setLocalDate(dto.getLocalDate());
+
+        if (dto.getTreatmentId() != null) {
+            Treatment treatment = treatmentRepository.findById(dto.getTreatmentId())
+                    .orElseThrow(() -> new RuntimeException("Treatment not found"));
+            visit.setTreatment(treatment);
+        } else {
+            visit.setTreatment(null);
+        }
+
+        if (dto.getSickLeaveId() != null) {
+            SickLeave sickLeave = sickLeaveRepository.findById(dto.getSickLeaveId())
+                    .orElseThrow(() -> new RuntimeException("SickLeave not found"));
+            visit.setSickLeave(sickLeave);
+        } else {
+            visit.setSickLeave(null);
+        }
+
 
         Visit updated = visitRepository.save(visit);
         return mapperUtil.map(updated, VisitDto.class);
@@ -85,8 +113,13 @@ public class VisitServiceImpl implements VisitService {
 
     @Override
     public void deleteVisit(Long id) {
-        if (!visitRepository.existsById(id)) {
-            throw new RuntimeException("Visit not found");
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        if (visit.getTreatment() != null || visit.getSickLeave() != null) {
+            visit.setDeleted(true);
+            visitRepository.save(visit);
+            throw new RuntimeException("Cannot hard-delete: visit has linked records and was soft-deleted instead.");
         }
         visitRepository.deleteById(id);
     }
@@ -162,6 +195,21 @@ public class VisitServiceImpl implements VisitService {
         visit.setTreatment(treatment);
 
         return mapperUtil.map(visitRepository.save(visit), VisitDto.class);
+    }
+    @Override
+    public List<VisitDto> getAllDeletedVisits() {
+        return visitRepository.findAllByDeletedTrue()
+                .stream()
+                .map(v -> mapperUtil.map(v, VisitDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void restoreVisit(Long id) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+        visit.setDeleted(false);
+        visitRepository.save(visit);
     }
 
 

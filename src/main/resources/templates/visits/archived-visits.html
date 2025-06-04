@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Archived Visits</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1>Archived Visits</h1>
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+    <a th:href="@{/visits}" class="btn btn-secondary mb-3">← Back to Active Visits</a>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Date</th>
+            <th>Doctor</th>
+            <th>Patient</th>
+            <th>Diagnosis</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="visit : ${visits}">
+            <td th:text="${visit.localDate}"></td>
+            <td th:text="${visit.doctor.doctorName}"></td>
+            <td th:text="${visit.patient.name}"></td>
+            <td th:text="${visit.diagnosis.diagnosisName}"></td>
+            <td>
+                <form th:action="@{'/visits/restore/' + ${visit.id}}" method="post">
+                    <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

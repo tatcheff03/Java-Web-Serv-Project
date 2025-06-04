@@ -13,6 +13,8 @@ private Long doctorId;
 private Long patientId;
 private LocalDate localDate;
 private Long diagnosisId;
+private Long treatmentId;
+private Long sickLeaveId;
 
 
 }

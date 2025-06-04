@@ -21,7 +21,7 @@
 
 
     <tr th:each="treatment : ${treatments}">
-        <td th:text="${treatment.instructions}"></td> <!-- ✅ First column: Instructions -->
+        <td th:text="${treatment.instructions}"></td>
         <td>
             <ul class="mb-0 ps-3">
                 <li th:each="med : ${treatment.medications}" th:text="${med}"></li>

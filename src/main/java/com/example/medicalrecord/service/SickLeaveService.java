@@ -13,4 +13,5 @@ public interface SickLeaveService {
     void deleteSickLeave(Long id);
     List<SickLeaveDto> getAllDeletedSickLeaves();
     void restoreSickLeave(Long id);
+    List<SickLeaveDto> getAllSickLeavesByPatientId(Long patientId);
 }

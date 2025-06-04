@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.medicalrecord.service.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,17 +37,25 @@ public class VisitViewController {
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(@RequestParam(required = false) Long patientId, Model model) {
+        CreateVisitViewModel viewModel = new CreateVisitViewModel();
+        viewModel.setPatientId(patientId);
+        model.addAttribute("visit", viewModel);
 
-
-        model.addAttribute("visit", new CreateVisitViewModel());
         model.addAttribute("doctors", doctorService.getAllDoctors());
         model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("diagnoses", diagnosisService.getAllDiagnosis());
-        model.addAttribute("treatments",treatmentService.getAllTreatments());
-        model.addAttribute("sickLeaves",sickLeaveService.getAllSickLeaves());
+        model.addAttribute("treatments", treatmentService.getAllTreatments());
+
+        if (patientId != null) {
+            model.addAttribute("sickLeaves", sickLeaveService.getAllSickLeavesByPatientId(patientId));
+        } else {
+            model.addAttribute("sickLeaves", new ArrayList<>());
+        }
+
         return "visits/visits-create";
     }
+
 
     @PostMapping("/create")
     public String createVisit(@ModelAttribute("visit") CreateVisitViewModel visitViewModel) {
@@ -66,15 +75,24 @@ public class VisitViewController {
         viewModel.setPatientId(dto.getPatient().getId());
         viewModel.setLocalDate(dto.getLocalDate());
         viewModel.setDiagnosisId(dto.getDiagnosis().getId());
-        viewModel.setTreatmentId(dto.getTreatment().getId());
-        viewModel.setSickLeaveId(dto.getSickLeave().getId());
+
 
         model.addAttribute("visit", viewModel);
         model.addAttribute("doctors", doctorService.getAllDoctors());
         model.addAttribute("patients", patientService.getAllPatients());
         model.addAttribute("diagnoses", diagnosisService.getAllDiagnosis());
         model.addAttribute("treatments",treatmentService.getAllTreatments());
-        model.addAttribute("sickLeaves",sickLeaveService.getAllSickLeaves());
+        model.addAttribute("sickLeaves",sickLeaveService.getAllSickLeavesByPatientId(dto.getPatient().getId()));
+
+        if (dto.getSickLeave() != null) {
+            viewModel.setSickLeaveId(dto.getSickLeave().getId());
+        }
+        if (dto.getTreatment() != null) {
+            viewModel.setTreatmentId(dto.getTreatment().getId());
+        }
+
+
+
         return "visits/visits-edit";
     }
 

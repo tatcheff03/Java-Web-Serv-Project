@@ -25,7 +25,7 @@ public class Visit extends BaseEntity {
     @JoinColumn (name = "diagnosis_id")
     private  Diagnosis diagnosis;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "treatment_id")
     private Treatment treatment;
 

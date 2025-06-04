@@ -47,8 +47,13 @@
 
         <div class="mb-3">
             <label class="form-label">Sick Leave:</label>
-            <input type="date" th:field="*{localDate}" class="form-control" required/>
-
+            <select th:field="*{sickLeaveId}" class="form-select">
+                <option value="">-- None --</option>
+                <option th:each="s : ${sickLeaves}"
+                        th:value="${s.id}"
+                        th:text="${#temporals.format(s.startDate, 'yyyy-MM-dd') + ' – ' + s.dayDuration + ' days'}">
+                </option>
+            </select>
         </div>
 
 

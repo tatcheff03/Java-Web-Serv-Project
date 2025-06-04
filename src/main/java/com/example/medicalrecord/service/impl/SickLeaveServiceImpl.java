@@ -101,5 +101,12 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         sickLeave.setDeleted(false);
         sickLeaveRepository.save(sickLeave);
     }
+    @Override
+    public List<SickLeaveDto> getAllSickLeavesByPatientId(Long patientId) {
+        return sickLeaveRepository.findByPatientId(patientId).stream()
+                .map(sickLeave -> mapperUtil.map(sickLeave, SickLeaveDto.class))
+                .collect(Collectors.toList());
+    }
+
 
 }

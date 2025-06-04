@@ -8,5 +8,7 @@ import java.util.List;
 public interface SickLeaveRepository  extends JpaRepository<SickLeave, Long> {
     List<SickLeave> findAllByDeletedFalse();
     List<SickLeave> findAllByDeletedTrue();
+    List<SickLeave> findByPatientId(Long patientId);
+
 
 }

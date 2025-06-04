@@ -88,7 +88,7 @@ public class VisitServiceImpl implements VisitService {
 
         visit.setDoctor(doctor);
         visit.setDiagnosis(diagnosis);
-        visit.setLocalDate(dto.getLocalDate());
+
 
         if (dto.getTreatmentId() != null) {
             Treatment treatment = treatmentRepository.findById(dto.getTreatmentId())
@@ -106,6 +106,9 @@ public class VisitServiceImpl implements VisitService {
             visit.setSickLeave(null);
         }
 
+        if (dto.getLocalDate() != null) {
+            visit.setLocalDate(dto.getLocalDate());
+        }
 
         Visit updated = visitRepository.save(visit);
         return mapperUtil.map(updated, VisitDto.class);

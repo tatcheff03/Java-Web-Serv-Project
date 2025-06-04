@@ -21,7 +21,11 @@
     </thead>
     <tbody>
     <tr th:each="patient : ${patients}">
-      <td th:text="${patient.name}"></td>
+      <td th:text="${patient.name}">
+        <a th:href="@{/visits/create(patientId=${patient.id})}" class="btn btn-success btn-sm"> Add Visit</a>
+      </td>
+
+
       <td th:text="${patient.hasPaidInsuranceLastSixMonths ? 'Yes' : 'No'}"></td>
       <td th:text="${patient.personalDoctor.doctorName}"></td>
       <td>

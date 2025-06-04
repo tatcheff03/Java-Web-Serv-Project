@@ -57,5 +57,11 @@ public class SickLeaveController {
         sickLeaveService.restoreSickLeave(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/by-patient/{patientId}")
+    @ResponseBody
+    public List<SickLeaveDto> getAllByPatientId(@PathVariable Long patientId) {
+        return sickLeaveService.getAllSickLeavesByPatientId(patientId);
+    }
+
 
 }

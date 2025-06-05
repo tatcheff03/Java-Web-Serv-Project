@@ -1,0 +1,28 @@
+name: Notify Discord on Commit
+
+on:
+  push:
+    branches:
+      - main  # change this if you use a different default branch
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send commit info to Discord
+        env:
+          WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -H "Content-Type: application/json" \
+          -X POST \
+          -d '{
+            "username": "GitHub Commits",
+            "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+            "embeds": [{
+              "title": "📦 New Commit in ${{ github.repository }}",
+              "description": "**${{ github.event.head_commit.message }}**",
+              "url": "https://github.com/${{ github.repository }}/commit/${{ github.sha }}",
+              "color": 7506394
+            }]
+          }' \
+          $WEBHOOK_URL

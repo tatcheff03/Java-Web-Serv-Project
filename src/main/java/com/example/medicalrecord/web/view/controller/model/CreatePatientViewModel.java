@@ -11,4 +11,5 @@ public class CreatePatientViewModel {
     private String egn;
     private boolean hasPaidInsuranceLastSixMonths;
     private long personalDoctorId;
+    private String username;
 }

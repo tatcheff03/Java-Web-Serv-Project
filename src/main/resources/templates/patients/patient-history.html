@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Моята история</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4"> Медицинска история</h2>
+
+    <div th:if="${#lists.isEmpty(visits)}">
+        <p>❗ Нямате записани прегледи.</p>
+    </div>
+
+    <table th:if="${!#lists.isEmpty(visits)}" class="table table-striped table-bordered">
+        <thead class="table-dark">
+        <tr>
+            <th>Дата</th>
+            <th>Лекар</th>
+            <th>Диагноза</th>
+            <th>Лечение</th>
+            <th>Болничен</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="visit : ${visits}">
+            <td th:text="${#temporals.format(visit.localDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${visit.doctor.doctorName}"></td>
+            <td th:text="${visit.diagnosis.diagnosisName}"></td>
+            <td>
+                <ul>
+                    <li th:each="med : ${visit.treatment.medications}" th:text="${med}"></li>
+                    <li th:text="${visit.treatment.instructions}"></li>
+                </ul>
+            </td>
+            <td>
+            <ul>
+            <li th:if="${visit.sickLeave != null}" th:text="${visit.sickLeave.dayDuration + ' дни'}"></li>
+            <li th:if="${visit.sickLeave != null}" th:text="${'Начална дата: ' + #temporals.format(visit.sickLeave.startDate, 'dd/MM/yyyy')}"></li>
+
+                </ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

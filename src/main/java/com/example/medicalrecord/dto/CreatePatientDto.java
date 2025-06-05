@@ -10,4 +10,5 @@ public class CreatePatientDto {
     private String egn;
     private boolean hasPaidInsuranceLastSixMonths;
     private long personalDoctorId;
+    private String username;
 }

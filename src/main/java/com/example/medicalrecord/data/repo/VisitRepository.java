@@ -9,4 +9,6 @@ public interface VisitRepository extends JpaRepository<Visit, Long> {
     boolean existsBySickLeaveId(Long sickLeaveId);
     List<Visit> findAllByDeletedFalse();
     List<Visit>findAllByDeletedTrue();
+    List<Visit> findAllByPatientId(Long patientId);
+
 }

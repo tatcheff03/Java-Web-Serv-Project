@@ -14,4 +14,5 @@ public class DoctorViewModel {
     private boolean personalDoc;
     private Set<Specialization> specializations;
     private int patientCount;
+    private String username;
 }

@@ -15,4 +15,5 @@ public class DoctorDto {
     private boolean personalDoc;
     private int patientCount;
     private Set<Specialization> specializations;
+    private String username;
 }

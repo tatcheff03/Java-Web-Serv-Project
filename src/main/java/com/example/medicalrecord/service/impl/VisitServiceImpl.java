@@ -6,6 +6,7 @@ import com.example.medicalrecord.data.repo.*;
 import com.example.medicalrecord.dto.*;
 import com.example.medicalrecord.service.VisitService;
 import com.example.medicalrecord.util.MapperUtil;
+import com.example.medicalrecord.web.view.controller.model.VisitViewModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -206,6 +207,14 @@ public class VisitServiceImpl implements VisitService {
                 .map(v -> mapperUtil.map(v, VisitDto.class))
                 .collect(Collectors.toList());
     }
+    @Override
+    public List<VisitViewModel> getVisitsByPatientId(Long patientId) {
+        return visitRepository.findAllByPatientId(patientId)
+                .stream()
+                .map(v -> mapperUtil.map(v, VisitViewModel.class))
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public void restoreVisit(Long id) {

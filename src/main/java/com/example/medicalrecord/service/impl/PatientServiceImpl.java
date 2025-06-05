@@ -27,6 +27,7 @@ public class PatientServiceImpl implements PatientService {
         patient.setId(null);
         patient.setEgn(createpatientDto.getEgn());
         patient.setPersonalDoctor(doctor);
+        patient.setUsername(createpatientDto.getUsername());
         Patient savedPatient = patientRepository.save(patient);
         return mapperUtil.map(savedPatient, PatientDto.class);
 
@@ -60,9 +61,17 @@ public class PatientServiceImpl implements PatientService {
         patient.setEgn(createPatientDto.getEgn());
         patient.setHasPaidInsuranceLastSixMonths(createPatientDto.isHasPaidInsuranceLastSixMonths());
         patient.setPersonalDoctor(doctor);
+        patient.setUsername(createPatientDto.getUsername());
+
 
         Patient updated = patientRepository.save(patient);
         return mapperUtil.map(updated, PatientDto.class);
+    }
+
+    @Override
+    public Patient findByUsername(String username) {
+        return patientRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
     }
 
 

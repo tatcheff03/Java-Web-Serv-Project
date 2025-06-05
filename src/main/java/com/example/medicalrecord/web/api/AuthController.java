@@ -23,14 +23,15 @@ public class AuthController {
     @GetMapping("/logout")
     public String logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 
-        if (authentication != null) {
-            new SecurityContextLogoutHandler().logout(request, response, authentication);
-        }
+
 
 
         String idToken = "";
         if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
             idToken = oidcUser.getIdToken().getTokenValue();
+        }
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
 
 

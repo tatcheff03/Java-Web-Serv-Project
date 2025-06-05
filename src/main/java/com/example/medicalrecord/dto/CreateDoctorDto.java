@@ -12,4 +12,5 @@ public class CreateDoctorDto {
     private  String doctorName;
     private boolean personalDoc;
     private Set<Specialization> specializations;
+    private String username;
 }

@@ -4,6 +4,7 @@ import com.example.medicalrecord.dto.CreateSickLeaveDto;
 import com.example.medicalrecord.dto.CreateTreatmentDto;
 import com.example.medicalrecord.dto.CreateVisitDto;
 import com.example.medicalrecord.dto.VisitDto;
+import com.example.medicalrecord.web.view.controller.model.VisitViewModel;
 
 import java.util.List;
 
@@ -20,4 +21,7 @@ public interface VisitService {
     VisitDto attachTreatment(Long visitId, Long treatmentId);
     List<VisitDto> getAllDeletedVisits();
     void restoreVisit(Long id);
+    List<VisitViewModel> getVisitsByPatientId(Long patientId);
+
+
 }

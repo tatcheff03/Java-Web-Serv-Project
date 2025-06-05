@@ -4,6 +4,7 @@ import com.example.medicalrecord.dto.CreateDoctorDto;
 import com.example.medicalrecord.dto.DoctorDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DoctorService {
     DoctorDto createDoctor(CreateDoctorDto createDoctorDto);
@@ -11,4 +12,5 @@ public interface DoctorService {
     DoctorDto getDoctorById(Long id);
     DoctorDto updateDoctor(Long id, CreateDoctorDto createDoctorDto);
     void deleteDoctor(Long id);
+    Optional<DoctorDto> findByUsername(String username);
 }

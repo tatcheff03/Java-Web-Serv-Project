@@ -11,4 +11,5 @@ public class PatientDto {
     private String egn;
     private boolean hasPaidInsuranceLastSixMonths;
     private DoctorDto personalDoctor;
+    private String username;
 }

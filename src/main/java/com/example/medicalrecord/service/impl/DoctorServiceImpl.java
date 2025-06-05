@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +24,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public DoctorDto createDoctor(CreateDoctorDto createDoctorDto) {
         Doctor doctor = mapperUtil.map(createDoctorDto, Doctor.class);
+        doctor.setUsername(createDoctorDto.getUsername());
         Doctor savedDoctor = doctorRepository.save(doctor);
         return mapperUtil.map(savedDoctor, DoctorDto.class);
     }
@@ -50,7 +52,14 @@ public class DoctorServiceImpl implements DoctorService {
         Doctor doctor = doctorRepository.findById(id).orElseThrow(() -> new RuntimeException("Doctor doesn't exist"));
         mapperUtil.map(createDoctorDto, doctor);
         Doctor updated = doctorRepository.save(doctor);
+        doctor.setUsername(createDoctorDto.getUsername());
         return mapperUtil.map(updated, DoctorDto.class);
+    }
+
+    @Override
+    public Optional<DoctorDto> findByUsername(String username) {
+        return doctorRepository.findByUsername(username)
+                .map(doctor -> mapperUtil.map(doctor, DoctorDto.class));
     }
 
     @Override

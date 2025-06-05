@@ -30,4 +30,6 @@ public class Doctor extends BaseEntity {
     @Column(name = "specialization")
     private Set<Specialization> specializations = new HashSet<>();
 
+    @Column(nullable = false,unique = true)
+    private String username;
 }

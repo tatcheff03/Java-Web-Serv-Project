@@ -1,5 +1,6 @@
 package com.example.medicalrecord.service;
 
+import com.example.medicalrecord.data.entity.Patient;
 import com.example.medicalrecord.dto.CreatePatientDto;
 import com.example.medicalrecord.dto.PatientDto;
 
@@ -11,4 +12,6 @@ public interface PatientService {
     PatientDto getPatientById(Long id);
     PatientDto updatePatient(Long id, CreatePatientDto createPatientDto);
     void deletePatient(Long id);
+    Patient findByUsername(String username);
+
 }

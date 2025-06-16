@@ -25,9 +25,10 @@
         </div>
 
         <div class="mb-3">
-            <label for="patientId" class="form-label">Patient:</label>
-        <input type="text" class="form-control" th:value="${diagnosis.patientName}" readonly />
+            <label for="patientName" class="form-label">Patient:</label>
+            <input type="text" id="patientName" class="form-control" th:value="${diagnosis.patientName}" readonly />
         </div>
+
 
 
         <button type="submit" class="btn btn-warning">Update</button>

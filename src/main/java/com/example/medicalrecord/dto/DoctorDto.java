@@ -11,9 +11,13 @@ import java.util.Set;
 @Setter
 public class DoctorDto {
     private  Long id;
+    @Setter
     private String doctorName;
     private boolean personalDoc;
     private int patientCount;
     private Set<Specialization> specializations;
     private String username;
+    private String uniqueIdentifier;
+
+
 }

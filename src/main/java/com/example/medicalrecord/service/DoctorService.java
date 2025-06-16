@@ -12,5 +12,9 @@ public interface DoctorService {
     DoctorDto getDoctorById(Long id);
     DoctorDto updateDoctor(Long id, CreateDoctorDto createDoctorDto);
     void deleteDoctor(Long id);
+    void  restoreDoctor(Long id);
     Optional<DoctorDto> findByUsername(String username);
+    List<DoctorDto> getAllDeletedDoctors();
+    List<DoctorDto>getDoctorsWithPatientCount();
+    void  generateMissingDoctorIdentifiers();
 }

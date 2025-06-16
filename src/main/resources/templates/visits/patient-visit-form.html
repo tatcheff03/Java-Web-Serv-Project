@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Patient</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">👤 Select Patient</h2>
+
+    <form th:action="@{/visits/report/by-patient}" method="post">
+        <div class="mb-3">
+            <label for="patientId" class="form-label">Patient:</label>
+            <select name="patientId" id="patientId" class="form-select" required>
+                <option value="" disabled selected>Select a patient</option>
+                <option th:each="p : ${patients}"
+                        th:value="${p.id}"
+                        th:text="${p.name + ' (EGN: ' + #strings.substring( p.egn,0 , 5) + '****' +  #strings.substring(p.egn, 9) +')'}">
+                </option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Show Visits</button>
+        <a th:href="@{/}" class="btn btn-secondary ms-2">← Back</a>
+    </form>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

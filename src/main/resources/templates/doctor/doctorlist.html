@@ -1,29 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Doctor List</title>
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
 </head>
 <body class="bg-light">
+
+
+
+<div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+<div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+
 <div class="container mt-5">
     <h1 class="mb-4">Doctors</h1>
-    <a th:href="@{/doctors/create}" class="btn btn-success mb-3">+ Create New Doctor</a>
+    <div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+        <a th:href="@{/doctors/create}" class="btn btn-success mb-3">+ Create New Doctor</a>
+    </div>
+
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
-            <th>ID</th>
+            <th sec:authorize="hasRole('ADMIN')">ID</th>
             <th>Name</th>
             <th>Is Personal</th>
             <th>Specializations</th>
-            <th>Patient Count</th>
-            <th>Actions</th>
+            <th>Doctor ID</th>
+            <th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Actions</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="doctor : ${doctors}">
-            <td th:text="${doctor.id}"></td>
+            <td sec:authorize="hasRole('ADMIN')" th:text="${doctor.id}"></td>
             <td th:text="${doctor.doctorName}"></td>
             <td th:text="${doctor.personalDoc ? 'Yes' : 'No'}"></td>
 
@@ -33,11 +44,16 @@
                     <li th:each="spec : ${doctor.specializations}" th:text="${spec}"></li>
                 </ul>
             </td>
-            <td th:text="${doctor.patientCount}">0</td>
-            <td>
+
+            <td th:text="${doctor.uniqueIdentifier}"></td>
+
+
+            <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                 <a th:href="@{'/doctors/edit/' + ${doctor.id}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/doctors/delete/' + ${doctor.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+                <a th:href="@{'/doctors/delete/' + ${doctor.id}}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure?');">Delete</a>
             </td>
+
         </tr>
         </tbody>
     </table>

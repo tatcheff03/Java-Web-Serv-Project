@@ -28,12 +28,18 @@
         <tbody>
         <tr th:each="v : ${visits}">
             <td th:text="${v.localDate}"></td>
-            <td th:text="${v.patient.name}"></td>
-            <td th:text="${v.doctor.doctorName}"></td>
-            <td th:text="${v.diagnosis.diagnosisName}"></td>
+            <td th:text="${v.patient !=null ? v.patient.name:'N/A'}"></td>
+            <td th:text="${v.doctor !=null ? v.doctor.doctorName:'N/A'}"></td>
+            <td th:text="${v.diagnosis != null ? v.diagnosis.diagnosisName: 'N/A'}"></td>
             <td>
-                <a th:href="@{'/visits/edit/' + ${v.id}}" class="btn btn-warning btn-sm">Edit</a>
-                <a th:href="@{'/visits/delete/' + ${v.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+                <a th:if="${v.id != null}"
+                   th:href="@{'/visits/edit/' + ${v.id}}"
+                   class="btn btn-warning btn-sm">Edit</a>
+
+                <a th:if="${v.id != null}"
+                   th:href="@{'/visits/delete/' + ${v.id}}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure?');">Delete</a>
             </td>
         </tr>
         </tbody>

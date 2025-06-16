@@ -1,0 +1,18 @@
+meta {
+  name: Create Visits
+  type: http
+  seq: 6
+}
+
+put {
+  url: http://localhost:8081/api/visits/9/treatment/attach
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "treatmentId": 4
+  }
+  
+}

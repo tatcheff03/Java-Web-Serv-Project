@@ -7,40 +7,44 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-<h1>All Treatments</h1>
-<a th:href="@{/treatment/create}" class="btn btn-success mb-3">➕ Create Treatment</a>
+    <h1>All Treatments</h1>
+    <a th:href="@{/treatment/create}" class="btn btn-success mb-3">➕ Create Treatment</a>
     <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-        <th>Instructions</th>
-        <th>Medications</th>
-        <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
+        <thead class="table-dark">
+        <tr>
+            <th>Instructions</th>
+            <th>Medications</th>
+            <th>Actions</th>
+            <th th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Patient</th>
+        </tr>
+        </thead>
+        <tbody>
 
 
-    <tr th:each="treatment : ${treatments}">
-        <td th:text="${treatment.instructions}"></td>
-        <td>
-            <ul class="mb-0 ps-3">
-                <li th:each="med : ${treatment.medications}" th:text="${med}"></li>
-            </ul>
-        </td>
-        <td >
-            <a th:href="@{'/treatment/edit/' + ${treatment.id}}" class="btn btn-warning btn-sm">Edit</a>
-            <a th:href="@{'/treatment/delete/' + ${treatment.id}}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?');">Delete</a>
+        <tr th:each="treatment : ${treatments}">
+            <td th:text="${treatment.instructions}"></td>
+
+            <td>
+                <ul class="mb-0 ps-3">
+                    <li th:each="med : ${treatment.medications}" th:text="${med}"></li>
+                </ul>
+                <p th:if="${#lists.isEmpty(treatment.medications)}">No active medicines</p>
+            </td>
+
+            <td>
+                <a th:href="@{'/treatment/edit/' + ${treatment.id}}" class="btn btn-warning btn-sm">Edit</a>
+                <a th:href="@{'/treatment/delete/' + ${treatment.id}}" class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure?');">Delete</a>
+            </td>
 
 
-        </td>
-    </tr>
+            <td th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                th:text="${treatment.patientName}">Patient</td>
+        </tr>
 
 
-
-
-
-    </tbody>
-</table>
+        </tbody>
+    </table>
 </div>
 
 </body>

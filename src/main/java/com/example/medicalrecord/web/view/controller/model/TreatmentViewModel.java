@@ -11,4 +11,7 @@ public class TreatmentViewModel {
     private Long id;
     private String instructions;
     List<String> medications;
+    private String issuedByName;
+    private String patientName;
+
 }

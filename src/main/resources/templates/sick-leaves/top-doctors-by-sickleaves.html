@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Top Doctors by Sick Leaves</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">👨‍⚕️ Doctors Who Issued the Most Sick Leaves</h2>
+    <ul class="list-group">
+        <li class="list-group-item" th:each="entry : ${topDoctors}">
+            <span th:text="${entry.key.doctorName}">Doctor</span>
+            (<span th:text="${entry.value}">0</span> sick leaves)
+        </li>
+    </ul>
+
+
+    <a th:href="@{/}" class="btn btn-secondary mt-3">← Back</a>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

@@ -1,9 +1,11 @@
 package com.example.medicalrecord.web.api;
 
 import com.example.medicalrecord.service.PatientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import com.example.medicalrecord.dto.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,7 +17,8 @@ public class PatientController {
     private final PatientService patientService;
 
     @PostMapping
-    public ResponseEntity<PatientDto> createPatient(@RequestBody CreatePatientDto dto) {
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    public ResponseEntity<PatientDto> createPatient(@Valid @RequestBody CreatePatientDto dto) {
         PatientDto created = patientService.createPatient(dto);
         return ResponseEntity.ok(created);
     }
@@ -27,11 +30,12 @@ public class PatientController {
 
     @GetMapping
     public ResponseEntity<List<PatientDto>> getAllPatients() {
-        return ResponseEntity.ok(patientService.getAllPatients());
+        return ResponseEntity.ok(patientService.getAllActivePatients());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @RequestBody CreatePatientDto dto) {
+    @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
+    public ResponseEntity<PatientDto> updatePatient(@PathVariable Long id, @Valid @RequestBody CreatePatientDto dto) {
         PatientDto updated = patientService.updatePatient(id, dto);
         return ResponseEntity.ok(updated);
     }

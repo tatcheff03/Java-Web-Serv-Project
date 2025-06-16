@@ -12,7 +12,10 @@ import java.time.LocalDate;
 public class SickLeaveViewModel {
     private Long id;
     private LocalDate startDate;
+    private LocalDate endDate;
     private int dayDuration;
     private PatientDto patient;
+    private String patientName;
+    private String doctorName;
     private DoctorDto issuedBy;
 }

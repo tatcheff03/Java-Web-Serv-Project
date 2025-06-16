@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="bg">
+<html xmlns:th="http://www.thymeleaf.org" lang="bg"
+xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <title>Medicine List</title>
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
@@ -8,12 +9,26 @@
 <div class="container mt-5">
     <h1 class="mb-4"> Medicine List</h1>
 
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+
+
     <a th:href="@{/medicines/create}" class="btn btn-success mb-3">Add new medicine</a>
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
-            <th>ID</th>
+            <th sec:authorize="hasRole('ADMIN')">ID</th>
             <th>Name</th>
             <th>Dosage</th>
             <th>Actions</th>
@@ -21,7 +36,7 @@
         </thead>
         <tbody>
         <tr th:each="medicine : ${medicines}">
-            <td th:text="${medicine.id}"></td>
+            <td sec:authorize=" hasRole('ADMIN') " th:text="${medicine.id}"></td>
             <td th:text="${medicine.medicineName}"></td>
             <td th:text="${medicine.dosage}"></td>
             <td>

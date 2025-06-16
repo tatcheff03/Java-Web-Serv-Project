@@ -10,4 +10,6 @@ import java.util.Set;
 public class CreateTreatmentViewModel {
     private Set<Long> medicationIds;
     private String instructions;
+    private Long patientId;
+    private  String patientName;
 }

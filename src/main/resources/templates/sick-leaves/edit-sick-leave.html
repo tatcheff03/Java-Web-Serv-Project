@@ -26,23 +26,19 @@
 
         <div class="mb-3">
             <label class="form-label">Patient:</label>
-            <th:block th:each="p : ${patients}">
-                <input type="text" class="form-control" readonly
-                       th:if="${p.id} == ${sickLeave.patientId}"
-                       th:value="${p.name}" />
-            </th:block>
+            <div th:each="p : ${patients}" th:if="${p.id} == ${sickLeave.patientId}">
+                <input type="text" class="form-control" th:value="${p.name}" readonly/>
+            </div>
         </div>
-
-
 
 
         <input type="hidden" th:field="*{patientId}"/>
         <div class="mb-3">
             <label class="form-label">Doctor:</label>
-            <select th:field="*{issuedById}" class="form-select">
-                <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.doctorName}"></option>
-            </select>
-        </div>
+            <input type = "hidden" th:field="*{issuedById}" />
+            <input type="text" class="form-control" th:value="${doctorName}" readonly />
+            </div>
+
 
         <button type="submit" class="btn btn-primary">Update</button>
         <a th:href="@{/sick-leaves}" class="btn btn-secondary ms-2">Cancel</a>

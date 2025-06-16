@@ -1,0 +1,19 @@
+meta {
+  name: Create Treatment
+  type: http
+  seq: 7
+}
+
+post {
+  url: http://localhost:8081/api/treatments
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "medicationIds": [1],
+    "instructions": "Only Paracetamol needed, 2 pills daily"
+  }
+  
+}

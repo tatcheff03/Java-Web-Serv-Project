@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Archived Diagnoses</title>
+
+</head>
+<body class="bg-light">
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+<div class="container mt-5">
+    <h1 class="mb-4">Archived Diagnoses</h1>
+
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Diagnosis Name</th>
+            <th>Issued By</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="diagnosis : ${diagnoses}">
+            <td th:text="${diagnosis.diagnosisName}"></td>
+            <td th:text="${diagnosis.doctorName}"></td>
+
+
+
+
+
+
+
+            <td>
+                <form th:action="@{'/diagnoses/restore/' + ${diagnosis.id}}"  method="post" >
+                    <button type="submit" class="btn btn-success btn-sm">Restore</button>
+                </form>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/diagnoses}" class="btn btn-secondary mt-3">← Back to Diagnosis List</a>
+</div>
+</body>
+</html>

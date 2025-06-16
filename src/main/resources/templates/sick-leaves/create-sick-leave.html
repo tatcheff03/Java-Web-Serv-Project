@@ -22,16 +22,18 @@
 
         <div class="mb-3">
             <label class="form-label">Patient:</label>
-            <select th:field="*{patientId}" class="form-select">
+            <select th:field="*{patientId}" class="form-select" required>
+                <option value="">-- Select Patient --</option>
                 <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.name}"></option>
             </select>
+
         </div>
 
         <div class="mb-3">
             <label class="form-label">Doctor:</label>
-            <select th:field="*{issuedById}" class="form-select">
-                <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.doctorName}"></option>
-            </select>
+            <input type="hidden" name="issuedById" th:value="${sickLeave.issuedById}" />
+            <input type="text" class="form-control" th:value="${doctorName}" readonly />
+
         </div>
 
         <button type="submit" class="btn btn-primary">Save</button>

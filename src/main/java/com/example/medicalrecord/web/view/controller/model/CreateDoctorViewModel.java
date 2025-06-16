@@ -14,4 +14,5 @@ public class CreateDoctorViewModel {
     private boolean personalDoc;
     private Set<Specialization> specializations;
     private String username;
+    private String uniqueIdentifier;
 }

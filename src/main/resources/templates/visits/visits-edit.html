@@ -12,9 +12,11 @@
         <input type="hidden" th:field="*{id}"/>
         <div class="mb-3">
             <label class="form-label">Doctor:</label>
-            <select th:field="*{doctorId}" class="form-select">
-                <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.doctorName}"></option>
-            </select>
+            <input type="text" class="form-control"
+                   th:value="${doctorName}"
+                   readonly />
+            <input type="hidden" th:field="*{doctorId}"/>
+
         </div>
         <div class="mb-3">
             <label class="form-label">Patient:</label>

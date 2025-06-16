@@ -8,7 +8,11 @@
 <div class="container mt-5 text-center">
     <h1 class="text-danger">🚫 Unauthorized</h1>
     <p th:text="${message}">You are not authorized to access this page.</p>
-    <a th:href="@{/}" class="btn btn-secondary">⬅️ Back to Home</a>
+
+    <a th:if="${from != null}" th:href="${from}" class="btn btn-secondary">⬅️ Back</a>
+    <a th:unless="${from != null}" th:href="@{/}" class="btn btn-secondary">⬅️ Home</a>
+
+
 </div>
 </body>
 </html>

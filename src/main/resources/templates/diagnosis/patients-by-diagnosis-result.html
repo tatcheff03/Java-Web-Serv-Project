@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Patients by Diagnosis</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">🧾 Patients with Diagnosis: "<span th:text="${diagnosisName}"></span>"</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>EGN</th>
+            <th>Insurance Paid</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="patient : ${patients}">
+            <td th:text="${patient.name}"></td>
+            <td th:text="${patient.egn}"></td>
+            <td th:text="${patient.hasPaidInsuranceLastSixMonths ? 'Yes' : 'No'}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(patients)}">
+            <td colspan="3" class="text-center text-muted fst-italic">No patients found.</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/diagnoses/report/by-diagnosis}" class="btn btn-secondary mt-3">← Back to Diagnosis Select</a>
+</div>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

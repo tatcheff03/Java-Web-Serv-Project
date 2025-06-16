@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visits by Doctor and Period</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+</head>
+<body class="bg-light container mt-4">
+
+<h2 class="mb-4">
+    🩺 Visits by <span th:text="${doctor.doctorName}"></span> from
+    <span th:text="${#temporals.format(startDate, 'dd-MM-yyyy')}"></span> to
+    <span th:text="${#temporals.format(endDate, 'dd-MM-yyyy')}"></span>
+</h2>
+
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>Date</th>
+        <th>Patient</th>
+        <th>Diagnosis</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="v : ${visits}">
+        <td th:text="${#temporals.format(v.localDate, 'dd-MM-yyyy')}"></td>
+        <td th:text="${v.patient.name}"></td>
+        <td th:text="${v.diagnosis != null ? v.diagnosis.diagnosisName : 'No diagnosis'}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<a th:href="@{/}" class="btn btn-secondary mt-3">← Back</a>
+
+</body>
+</html>

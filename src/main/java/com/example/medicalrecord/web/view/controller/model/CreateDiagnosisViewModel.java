@@ -8,4 +8,6 @@ import lombok.Getter;
 public class CreateDiagnosisViewModel {
     private String diagnosisName;
     private String description;
+    private Long patientId;
+    private String patientName;
 }

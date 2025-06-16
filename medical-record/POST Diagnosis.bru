@@ -1,0 +1,19 @@
+meta {
+  name: POST Diagnosis
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8081/api/diagnosis
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "diagnosisName": "Грип тип A",
+    "description": "Температура, кашлица, мускулна болка и отпадналост"
+  }
+  
+}

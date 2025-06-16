@@ -1,0 +1,21 @@
+meta {
+  name: Create SickLeave
+  type: http
+  seq: 5
+}
+
+post {
+  url: http://localhost:8081/api/sickleave
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "startDate": "2025-05-24",
+    "dayDuration": 10,
+    "patientId": 1,
+    "issuedById": 1
+  }
+  
+}

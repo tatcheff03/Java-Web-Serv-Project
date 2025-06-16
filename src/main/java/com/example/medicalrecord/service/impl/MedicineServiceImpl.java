@@ -1,5 +1,6 @@
 package com.example.medicalrecord.service.impl;
 
+import com.example.medicalrecord.Exceptions.SoftDeleteException;
 import com.example.medicalrecord.data.entity.*;
 import com.example.medicalrecord.data.repo.MedicineRepository;
 import com.example.medicalrecord.dto.*;
@@ -20,20 +21,22 @@ public class MedicineServiceImpl  implements MedicineService {
     @Override
     public MedicineDto createMedicine(CreateMedicineDto createMedicineDto) {
         Medicine medicine = mapperUtil.map(createMedicineDto, Medicine.class);
+        medicine.setDeleted(false);
         Medicine savedMedicine = medicineRepository.save(medicine);
+        System.out.println("Creating medicine:" + savedMedicine.getMedicineName() + " with dosage: " );
         return mapperUtil.map(savedMedicine, MedicineDto.class);
     }
 
     @Override
     public List<MedicineDto> getAllMedicines() {
-        return medicineRepository.findAll().stream()
-                .map(med -> mapperUtil.map(med ,MedicineDto.class)).collect(Collectors.toList());
+        return medicineRepository.findAllByDeletedFalse().stream()
+                .map(med -> mapperUtil.map(med, MedicineDto.class)).collect(Collectors.toList());
     }
 
     @Override
     public MedicineDto getMedicineById(Long id) {
-    Medicine med = medicineRepository.findById(id).orElseThrow(() -> new RuntimeException("Medicine not found"));
-    return mapperUtil.map(med, MedicineDto.class);
+        Medicine med = medicineRepository.findById(id).orElseThrow(() -> new RuntimeException("Medicine not found"));
+        return mapperUtil.map(med, MedicineDto.class);
     }
 
     @Override
@@ -49,10 +52,41 @@ public class MedicineServiceImpl  implements MedicineService {
     }
 
     @Override
-    public void deleteMedicine(Long id) {
-    if (!medicineRepository.existsById(id)) {
-        throw new RuntimeException("Medicine not found");
+    public void restoreMedicine(Long id) {
+        Medicine medicine = medicineRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medicine not found"));
+
+        if (!medicine.isDeleted()) {
+            throw new IllegalStateException("Medicine is already active");
+        }
+
+        medicine.setDeleted(false);
+        medicineRepository.save(medicine);
     }
-    medicineRepository.deleteById(id);
+
+    @Override
+    public List<MedicineDto> getAllArchivedMedicines() {
+        return medicineRepository.findAllByDeletedTrue()
+                .stream()
+                .map(med -> mapperUtil.map(med, MedicineDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteMedicine(Long id) {
+        Medicine medicine = medicineRepository.findWithTreatmentsById(id)
+                .orElseThrow(() -> new RuntimeException("Medicine not found"));
+
+        if (!medicine.getTreatments().isEmpty()) {
+            medicine.setDeleted(true);
+            medicineRepository.save(medicine);
+            throw new SoftDeleteException("Cannot hard-delete: medicine has linked treatments and was soft-deleted instead.");
+        } else {
+            medicineRepository.deleteById(id);
+        }
+
+
+
+
     }
 }

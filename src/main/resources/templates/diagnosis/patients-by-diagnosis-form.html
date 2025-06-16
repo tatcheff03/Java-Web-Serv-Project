@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Diagnosis</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">🧾 Select Diagnosis</h2>
+
+    <form th:action="@{/diagnoses/report/by-diagnosis}" method="post">
+        <div class="mb-3">
+            <label for="diagnosisName" class="form-label">Diagnosis Name:</label>
+            <select name="diagnosisName" id="diagnosisName" class="form-select" required>
+                <option th:each="d : ${diagnosisNames}"
+                        th:value="${d}"
+                        th:text="${d}">
+                </option>
+
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Show Patients</button>
+        <a th:href="@{/}" class="btn btn-secondary ms-2">← Back</a>
+    </form>
+</div>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

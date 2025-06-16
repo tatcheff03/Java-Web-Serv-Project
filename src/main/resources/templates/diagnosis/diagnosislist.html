@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Diagnosis List</title>
@@ -10,12 +11,20 @@
 <div class="container mt-5">
     <h1 class="mb-4">Diagnoses</h1>
 
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+        <span th:text="${errorMessage}"></span>
+    </div>
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+
     <a th:href="@{/diagnoses/create}" class="btn btn-success mb-3">+ Create New Diagnosis</a>
 
     <table class="table table-bordered table-striped">
         <thead class="table-dark">
         <tr>
-            <th>ID</th>
+            <th sec:authorize="hasRole('ADMIN')">ID</th>
             <th>Diagnosis Name</th>
             <th>Description</th>
             <th>Actions</th>
@@ -24,7 +33,7 @@
         </thead>
         <tbody>
         <tr th:each="diagnosis : ${diagnoses}">
-            <td th:text="${diagnosis.id}">1</td>
+            <td sec:authorize="hasRole('ADMIN')" th:text="${diagnosis.id}">1</td>
             <td th:text="${diagnosis.diagnosisName}">Name</td>
             <td th:text="${diagnosis.description}">Description</td>
 

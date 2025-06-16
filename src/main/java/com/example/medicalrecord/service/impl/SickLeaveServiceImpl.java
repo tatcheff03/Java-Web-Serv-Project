@@ -1,6 +1,7 @@
 package com.example.medicalrecord.service.impl;
 
 
+import com.example.medicalrecord.Exceptions.SoftDeleteException;
 import com.example.medicalrecord.data.entity.*;
 import com.example.medicalrecord.data.repo.*;
 import com.example.medicalrecord.dto.*;
@@ -9,7 +10,9 @@ import com.example.medicalrecord.util.MapperUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Month;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +30,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
     public SickLeaveDto createSickLeave(CreateSickLeaveDto dto) {
         Patient patient = patientRepository.findById(dto.getPatientId())
                 .orElseThrow(() -> new RuntimeException("Patient not found"));
+
         Doctor doctor = doctorRepository.findById(dto.getIssuedById())
                 .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
@@ -34,24 +38,42 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         sickLeave.setId(null);
         sickLeave.setPatient(patient);
         sickLeave.setIssuedBy(doctor);
+        sickLeave.setStartDate(dto.getStartDate());
+        sickLeave.setDayDuration(dto.getDayDuration());
+
 
         SickLeave saved = sickLeaveRepository.save(sickLeave);
-        return mapperUtil.map(saved, SickLeaveDto.class);
+
+
+        SickLeave loaded = sickLeaveRepository.findById(saved.getId())
+                .orElseThrow(() -> new RuntimeException("Sick leave not found after save"));
+
+        SickLeaveDto sickLeaveDto = mapperUtil.map(loaded, SickLeaveDto.class);
+
+
+
+        return sickLeaveDto;
     }
+
 
     @Override
     public List<SickLeaveDto> getAllSickLeaves() {
+
         return sickLeaveRepository.findAllByDeletedFalse()
                 .stream()
                 .map(s -> mapperUtil.map(s, SickLeaveDto.class))
                 .collect(Collectors.toList());
     }
 
+
+
     @Override
     public SickLeaveDto getSickLeaveById(Long id) {
         SickLeave sickLeave = sickLeaveRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("SickLeave not found"));
         return mapperUtil.map(sickLeave, SickLeaveDto.class);
+
+
     }
 
     @Override
@@ -79,7 +101,7 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         if (visitRepository.existsBySickLeaveId(id)) {
             sickLeave.setDeleted(true);
             sickLeaveRepository.save(sickLeave);
-            throw new RuntimeException("Cannot hard-delete: sick leave is linked to a visit and was soft-deleted instead.");
+            throw new SoftDeleteException("Cannot hard-delete: sick leave is linked to a visit and was soft-deleted instead.");
         }
 
         sickLeaveRepository.deleteById(id);
@@ -102,11 +124,50 @@ public class SickLeaveServiceImpl implements SickLeaveService {
         sickLeaveRepository.save(sickLeave);
     }
     @Override
+    public List<SickLeaveDto> getAllSickLeavesByDoctorId(Long doctorId) {
+        return sickLeaveRepository.findByIssuedById(doctorId).stream()
+                .map(sickLeave -> mapperUtil.map(sickLeave, SickLeaveDto.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<SickLeaveDto> getAllSickLeavesByPatientId(Long patientId) {
         return sickLeaveRepository.findByPatientId(patientId).stream()
                 .map(sickLeave -> mapperUtil.map(sickLeave, SickLeaveDto.class))
                 .collect(Collectors.toList());
     }
+    public Map.Entry<Month, Long> getMonthWithMostSickLeaves() {
+        return sickLeaveRepository.findAllByDeletedFalse().stream()
+                .filter(sl -> sl.getStartDate() != null)
+                .collect(Collectors.groupingBy(
+                        sl -> sl.getStartDate().getMonth(),
+                        Collectors.counting()
+                ))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .orElse(null);
+    }
+
+    @Override
+    public Map<Doctor, Long> getDoctorsWithMostSickLeaves() {
+        List<SickLeave> sickLeaves = sickLeaveRepository.findAllByDeletedFalse();
+
+        Map<Doctor, Long> countPerDoctor = sickLeaves.stream()
+                .filter(sl -> sl.getIssuedBy() != null)
+                .collect(Collectors.groupingBy(SickLeave::getIssuedBy, Collectors.counting()));
+
+        long max = countPerDoctor.values().stream().max(Long::compare).orElse(0L);
+
+        return countPerDoctor.entrySet().stream()
+                .filter(e -> e.getValue() == max)
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue
+                ));
+    }
+
 
 
 }
+
+

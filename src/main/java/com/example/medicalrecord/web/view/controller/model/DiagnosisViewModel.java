@@ -9,4 +9,5 @@ public class DiagnosisViewModel {
     private Long id;
     private String diagnosisName;
     private String description;
+    private String doctorName;
 }

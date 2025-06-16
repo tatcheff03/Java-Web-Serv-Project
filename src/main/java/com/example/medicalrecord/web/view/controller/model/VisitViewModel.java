@@ -16,5 +16,5 @@ public class VisitViewModel {
     private LocalDate localDate;
     private DiagnosisDto diagnosis;
     private TreatmentDto treatment;
-    private SickLeaveDto sickLeave;
+    private SickLeaveViewModel sickLeave;
 }

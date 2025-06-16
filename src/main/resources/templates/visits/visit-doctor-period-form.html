@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Visits by Period</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+</head>
+<body class="bg-light container mt-4">
+
+<h2 class="mb-3">📅 Filter Visits by Doctor and Period</h2>
+
+<form th:action="@{/visits/report/by-doctor-and-period}" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">Doctor</label>
+        <select name="doctorId" class="form-select" required>
+            <option th:each="d : ${doctors}" th:value="${d.id}" th:text="${d.doctorName}"></option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" name="startDate" class="form-control" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">End Date</label>
+        <input type="date" name="endDate" class="form-control" required>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary mt-2">Show Visits</button>
+    </div>
+</form>
+
+<a th:href="@{/}" class="btn btn-secondary mt-3">← Back</a>
+
+</body>
+</html>

@@ -21,6 +21,31 @@
       <input type="text" id="description" th:field="*{description}" class="form-control" required/>
     </div>
 
+    <div class="mb-3">
+      <label class="form-label">Issued By:</label>
+      <input type="text" class="form-control" th:value="${#authentication.principal.preferredUsername}" readonly/>
+    </div>
+
+    <div class="mb-3">
+      <label for="patientId" class="form-label">Patient:</label>
+      <select id="patientId" th:field="*{patientId}" class="form-select" required>
+        <option th:each="p : ${patients}"
+                th:value="${p.id}"
+                th:text="${p.name + ' (EGN: ' + p.egn + ')'}">
+          Dummy fallback
+
+        </option>
+
+
+
+
+      </select>
+
+
+    </div>
+
+
+
     <button type="submit" class="btn btn-primary">Create</button>
     <a th:href="@{/diagnoses}" class="btn btn-secondary ms-2">← Back to List</a>
   </form>

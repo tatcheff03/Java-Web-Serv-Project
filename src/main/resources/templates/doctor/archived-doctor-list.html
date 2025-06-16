@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Archived Doctors</title>
+
+</head>
+<body class="bg-light">
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+<div class="container mt-5">
+    <h1>Archived Doctors</h1>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
+
+    <div th:if="${#lists.isEmpty(doctors)}">
+        <p class="text-muted">No archived doctors available.</p>
+    </div>
+
+    <table class="table table-bordered table-striped" th:if="${doctors}">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Username</th>
+            <th>Specializations</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="doc : ${doctors}">
+            <td th:text="${doc.doctorName}"></td>
+            <td th:text="${doc.username}"></td>
+            <td>
+                <ul class="mb-0">
+                    <li th:each="spec : ${doc.specializations}" th:text="${spec}"></li>
+                </ul>
+            </td>
+            <td>
+                <a th:href="@{'/doctors/restore/' + ${doc.id}}" class="btn btn-sm btn-success">Restore</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/doctors}" class="btn btn-secondary mt-3">← Back to doctor list</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Visits by Period</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 class="mb-4">
+        📆 Visits from
+        <span th:text="${#temporals.format(startDate, 'dd-MM-yyyy')}"></span>
+        to
+        <span th:text="${#temporals.format(endDate, 'dd-MM-yyyy')}"></span>
+    </h2>
+
+    <div th:if="${visits != null and !visits.isEmpty()}">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
+            <tr>
+                <th>Date</th>
+                <th>Doctor</th>
+                <th>Patient</th>
+                <th>Diagnosis</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="v : ${visits}">
+                <td th:text="${#temporals.format(v.localDate, 'dd-MM-yyyy')}"></td>
+                <td th:text="${v.doctor != null ? v.doctor.doctorName : 'No doctor'}"></td>
+                <td th:text="${v.patient != null ? v.patient.name : 'No patient'}"></td>
+
+                <td th:text="${v.diagnosis != null ? v.diagnosis.diagnosisName : 'No diagnosis'}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${visits == null or visits.isEmpty()}" class="alert alert-warning">
+        ⚠️ No visits found for the selected period.
+    </div>
+
+    <a th:href="@{/}" class="btn btn-secondary mt-3">← Back</a>
+</div>
+
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

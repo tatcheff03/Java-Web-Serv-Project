@@ -27,7 +27,7 @@
         <tr th:each="visit : ${visits}">
             <td th:text="${#temporals.format(visit.localDate, 'dd/MM/yyyy')}"></td>
             <td th:text="${visit.doctor.doctorName}"></td>
-            <td th:text="${visit.diagnosis.diagnosisName}"></td>
+            <td th:text="${visit.diagnosis != null ? visit.diagnosis.diagnosisName : 'Без диагноза'}"></td>
             <td>
                 <ul>
                     <li th:each="med : ${visit.treatment.medications}" th:text="${med}"></li>
@@ -36,10 +36,9 @@
             </td>
             <td>
             <ul>
-            <li th:if="${visit.sickLeave != null}" th:text="${visit.sickLeave.dayDuration + ' дни'}"></li>
             <li th:if="${visit.sickLeave != null}" th:text="${'Начална дата: ' + #temporals.format(visit.sickLeave.startDate, 'dd/MM/yyyy')}"></li>
-
-                </ul>
+            <li th:if="${visit.sickLeave != null}" th:text="${'Крайна дата: ' + #temporals.format(visit.sickLeave.endDate, 'dd/MM/yyyy')}"></li>
+                    </ul>
             </td>
         </tr>
         </tbody>

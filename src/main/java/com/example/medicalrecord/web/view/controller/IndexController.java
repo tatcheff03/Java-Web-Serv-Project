@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequiredArgsConstructor
@@ -16,10 +19,17 @@ public class IndexController {
         return "index";
     }
 
-    @GetMapping("/unauthorized")
-    public String getUnauthorized(Model model) {
-        model.addAttribute("message", "You are not authorized to be here!");
-        return "/errors/unauthorized-errors";
-    }
 
+    @GetMapping("/unauthorized")
+    public String getUnauthorized(
+            @RequestParam(value = "from", required = false) String from,
+            @RequestParam(value = "errorMessage", required = false) String errorMessage,
+            Model model) {
+
+        model.addAttribute("from", from);
+        model.addAttribute("message", errorMessage != null && !errorMessage.isBlank()
+                ? errorMessage
+                : "You are not authorized to be here!");
+        return "unauthorized";
+    }
 }

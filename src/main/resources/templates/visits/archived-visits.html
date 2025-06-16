@@ -1,5 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="en">
+
+
 <head>
     <meta charset="UTF-8">
     <title>Archived Visits</title>
@@ -29,9 +32,9 @@
             <td th:text="${visit.patient.name}"></td>
             <td th:text="${visit.diagnosis.diagnosisName}"></td>
             <td>
-                <form th:action="@{'/visits/restore/' + ${visit.id}}" method="post">
-                    <button type="submit" class="btn btn-success btn-sm">Restore</button>
-                </form>
+                <a th:href="@{'/visits/restore/' + ${visit.id}}" class="btn btn-success btn-sm">Restore</a>
+
+
             </td>
         </tr>
         </tbody>

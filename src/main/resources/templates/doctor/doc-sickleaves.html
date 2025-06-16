@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Моите болнични</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>Моите издадени болнични</h2>
+
+    <table class="table table-bordered table-striped mt-3">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Пациент</th>
+            <th>Начало</th>
+            <th>Край</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="leave, iter : ${sickLeaves}">
+            <td th:text="${iter.index + 1}">1</td>
+            <td th:text="${leave.patientName}">Пациент</td>
+            <td th:text="${#temporals.format(leave.startDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#temporals.format(leave.endDate, 'dd/MM/yyyy')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

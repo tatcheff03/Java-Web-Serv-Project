@@ -9,7 +9,7 @@
 <div class="container mt-5">
     <h2>Create Visit</h2>
 
-    <!-- GET form just for patient selection -->
+
     <form method="get" th:action="@{/visits/create}">
         <div class="mb-3">
             <label class="form-label">Select Patient to Load Sick Leaves:</label>
@@ -30,9 +30,12 @@
 
         <div class="mb-3">
             <label class="form-label">Doctor:</label>
-            <select th:field="*{doctorId}" class="form-select">
-                <option th:each="doc : ${doctors}" th:value="${doc.id}" th:text="${doc.doctorName}"></option>
-            </select>
+            <th:block th:each="doc : ${doctors}">
+                <input type="text" class="form-control"
+                       th:if="${doc.id == visit.doctorId}"
+                       th:value="${doc.doctorName}" readonly/>
+            </th:block>
+            <input type="hidden" th:field="*{doctorId}"/>
         </div>
 
 

@@ -15,4 +15,5 @@ public class DoctorViewModel {
     private Set<Specialization> specializations;
     private int patientCount;
     private String username;
+    private String uniqueIdentifier;
 }

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Моите лечения</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4"> Предписани лечения</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Инструкции</th>
+            <th>Медикаменти</th>
+            <th>Назначено от</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="treatment, iterStat : ${treatments}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${treatment.instructions}">Примерна инструкция</td>
+            <td>
+                <ul>
+                    <li th:each="med : ${treatment.medications}" th:text="${med}">Лекарство</li>
+                </ul>
+            </td>
+            <td th:text="${treatment.issuedByName}">д-р Иванов</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,44 +1,70 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-  <meta charset="UTF-8">
-  <title>Patient List</title>
-  <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <title>Patient List</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-  <h1 class="mb-4">Patients</h1>
-  <a th:href="@{/patients/create}" class="btn btn-success mb-3">+ Add New Patient</a>
+    <h1 class="mb-4">Patients</h1>
 
-  <table class="table table-bordered table-striped">
-    <thead class="table-dark">
-    <tr>
-      <th>Name</th>
-      <th>Insurance Paid</th>
-      <th>Personal Doctor</th>
-      <th>Actions</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="patient : ${patients}">
-      <td th:text="${patient.name}">
-        <a th:href="@{/visits/create(patientId=${patient.id})}" class="btn btn-success btn-sm"> Add Visit</a>
-      </td>
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}"></div>
 
 
-      <td th:text="${patient.hasPaidInsuranceLastSixMonths ? 'Yes' : 'No'}"></td>
-      <td th:text="${patient.personalDoctor.doctorName}"></td>
-      <td>
-        <a th:href="@{'/patients/edit/' + ${patient.id}}" class="btn btn-warning btn-sm">Edit</a>
-        <a th:href="@{'/patients/delete/' + ${patient.id}}"
-           class="btn btn-danger btn-sm"
-           onclick="return confirm('Are you sure you want to delete this patient?');">
-          Delete
-        </a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+    <a th:href="@{'/patients/create?from=/patients'}" class="btn btn-success mb-3" sec:authorize="hasRole('ADMIN')">
+        + Add New Patient
+    </a>
+
+
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Name</th>
+            <th>Insurance Paid</th>
+            <th>Personal Doctor</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="patient : ${patients}">
+            <td>
+                <span th:text="${patient.name}"></span>
+
+                <!-- Add Visit (само ако логнатият е личен лекар) -->
+                <a th:if="${patient.personalDoctor != null and patient.personalDoctor.id == loggedInDoctorId}"
+                   th:href="@{/visits/create(patientId=${patient.id})}"
+                   class="btn btn-success btn-sm ms-2">Add Visit</a>
+            </td>
+
+            <td th:text="${patient.hasPaidInsuranceLastSixMonths ? 'Yes' : 'No'}"></td>
+
+            <td th:text="${patient.personalDoctor != null ? patient.personalDoctor.doctorName : 'N/A'}"></td>
+
+            <td>
+                <!-- Edit и Delete (само за ADMIN) -->
+                <a sec:authorize="hasRole('ADMIN')"
+                   th:href="@{'/patients/edit/' + ${patient.id}}"
+                   class="btn btn-warning btn-sm me-1">Edit</a>
+
+                <a sec:authorize="hasRole('DOCTOR')"
+                   th:if="${patient.personalDoctor != null and patient.personalDoctor.id == loggedInDoctorId}"
+                   th:href="@{'/patients/edit/' + ${patient.id}}"
+                   class="btn btn-warning btn-sm me-1">Edit</a>
+
+                <a sec:authorize="hasRole('ADMIN')"
+                   th:href="@{'/patients/delete/' + ${patient.id}}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to delete this patient?');">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 <script th:src="@{/js/bootstrap.bundle.js}"></script>
 </body>

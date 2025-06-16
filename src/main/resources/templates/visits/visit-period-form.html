@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Visits by Period</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">📅 Visits by Period</h2>
+
+    <!-- Form to select period -->
+    <form th:action="@{/visits/report/by-period}" method="post" class="mb-4 border p-4 bg-white rounded shadow-sm">
+        <div class="mb-3">
+            <label for="startDate" class="form-label fw-bold">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="endDate" class="form-label fw-bold">End Date:</label>
+            <input type="date" id="endDate" name="endDate" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary">🔍 Show Visits</button>
+    </form>
+</div>
+</body>
+</html>

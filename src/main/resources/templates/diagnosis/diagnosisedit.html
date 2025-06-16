@@ -1,12 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><!DOCTYPE html>
-        <html xmlns:th="http://www.thymeleaf.org" lang="en">
-        <head>
-        <meta charset="UTF-8">
-        <title>Edit Diagnosis</title>
+    <title>Edit Diagnosis</title>
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
 </head>
 <body class="bg-light">
@@ -22,6 +18,18 @@
             <label class="form-label" for="description">Description:</label>
             <input type="text" id="description" th:field="*{description}" class="form-control" required/>
         </div>
+
+        <div class="mb-3">
+            <label class="form-label">Issued By:</label>
+            <input type="text" class="form-control" th:value="${#authentication.principal.preferredUsername}" readonly/>
+        </div>
+
+        <div class="mb-3">
+            <label for="patientId" class="form-label">Patient:</label>
+        <input type="text" class="form-control" th:value="${diagnosis.patientName}" readonly />
+        </div>
+
+
         <button type="submit" class="btn btn-warning">Update</button>
         <a th:href="@{/diagnoses}" class="btn btn-secondary ms-2">← Cancel</a>
     </form>

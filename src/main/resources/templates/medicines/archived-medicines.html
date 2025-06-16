@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Архивирани лекарства</title>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h1>Archived Medicines</h1>
+
+
+<link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
+    <tr>
+        <th>Medicine Name</th>
+        <th>Dosage</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+<tr th:each="medicine : ${archived}">
+    <td th:text="${medicine.medicineName}"></td>
+    <td th:text="${medicine.dosage}"></td>
+    <td>
+        <form th:action="@{'/medicines/restore/' + ${medicine.id}}" method="get">
+            <button type="submit" class="btn btn-success btn-sm">Restore</button>
+        </form>
+    </td>
+</tr>
+    </tbody>
+</table>
+    <a th:href="@{/medicines}" class="btn btn-secondary mt-3">← Back to medicines list</a>
+</div>
+</body>
+</html>

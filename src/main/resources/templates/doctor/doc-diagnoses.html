@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Моите диагнози</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">Моите поставени диагнози</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>Име</th>
+            <th>Описание</th>
+            <th>Поставена от</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="diag, iterStat : ${diagnoses}">
+            <td th:text="${iterStat.index + 1}">1</td>
+            <td th:text="${diag.diagnosisName}">Диагноза</td>
+            <td th:text="${diag.description}">Описание</td>
+            <td th:text="${diag.doctorName}">д-р Иванов</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

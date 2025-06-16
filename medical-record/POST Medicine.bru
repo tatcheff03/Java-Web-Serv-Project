@@ -1,0 +1,22 @@
+meta {
+  name: POST Medicine
+  type: http
+  seq: 4
+}
+
+post {
+  url: http://localhost:8081/api/medicines
+  body: json
+  auth: none
+}
+
+body:json {
+  
+  {
+    "medicineName": "Vitamin C",
+    "dosage": "1000mg"
+  }
+  
+  
+  
+}

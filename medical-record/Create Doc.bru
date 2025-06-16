@@ -1,0 +1,23 @@
+meta {
+  name: Create Doc
+  type: http
+  seq: 2
+}
+
+post {
+  url: http://127.0.0.1:8081/api/doctors
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "doctorName": "Д-р Angelesko",
+    "personalDoc": true,
+    "specializations": [
+      "CARDIOLOGY",
+      "NEUROLOGY"
+      
+    ]
+  }
+}

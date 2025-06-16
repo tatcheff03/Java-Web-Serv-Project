@@ -8,12 +8,10 @@ import java.util.List;
 
 public interface MedicineService {
     MedicineDto createMedicine(CreateMedicineDto createMedicineDto);
-
     List<MedicineDto> getAllMedicines();
-
     MedicineDto getMedicineById(Long id);
-
     MedicineDto updateMedicine(MedicineDto medicineDto);
-
     void deleteMedicine(Long id);
+    void restoreMedicine(Long id);
+    List<MedicineDto> getAllArchivedMedicines();
 }

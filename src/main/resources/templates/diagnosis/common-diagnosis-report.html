@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Common Diagnoses</title>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet"/>
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">📊 Most Common Diagnoses</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+        <tr>
+            <th>Diagnosis Name</th>
+            <th>Occurrences</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="d : ${diagnosisStats}">
+            <td th:text="${d.diagnosisName}"></td>
+            <td th:text="${d.count}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/}" class="btn btn-secondary mt-3">← Back</a>
+</div>
+<script th:src="@{/js/bootstrap.bundle.js}"></script>
+</body>
+</html>

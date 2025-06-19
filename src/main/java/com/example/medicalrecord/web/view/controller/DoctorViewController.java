@@ -10,10 +10,13 @@ import com.example.medicalrecord.service.PatientService;
 import com.example.medicalrecord.util.MapperUtil;
 import com.example.medicalrecord.web.view.controller.model.DoctorViewModel;
 import com.example.medicalrecord.web.view.controller.model.CreateDoctorViewModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.math.raw.Mod;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -49,7 +52,14 @@ public class DoctorViewController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public String create(@ModelAttribute("doctor") CreateDoctorViewModel createModel) {
+    public String create(@Valid  @ModelAttribute("doctor") CreateDoctorViewModel createModel,
+                         BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("specializations", Specialization.values());
+            return "doctor/doctorcreate";
+        }
+
         CreateDoctorDto dto = mapperUtil.map(createModel, CreateDoctorDto.class);
         doctorService.createDoctor(dto);
         return "redirect:/doctors";
@@ -68,7 +78,15 @@ public class DoctorViewController {
 
     @PostMapping("/edit")
     @PreAuthorize("hasRole('ADMIN')")
-    public String update(@ModelAttribute("doctor") CreateDoctorViewModel updateModel) {
+    public String update(@Valid @ModelAttribute("doctor") CreateDoctorViewModel updateModel,
+                         BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("specializations", Specialization.values());
+            return "doctor/doctoredit";
+        }
+
+
         CreateDoctorDto dto = mapperUtil.map(updateModel, CreateDoctorDto.class);
         doctorService.updateDoctor(updateModel.getId(), dto);
         return "redirect:/doctors";

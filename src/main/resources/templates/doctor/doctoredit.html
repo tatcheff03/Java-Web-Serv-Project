@@ -11,32 +11,34 @@
 
     <form th:action="@{'/doctors/edit' }" th:object="${doctor}" method="post">
         <input type="hidden" th:field="*{id}"/>
+
         <div class="mb-3">
             <label class="form-label">Doctor Name:</label>
             <input type="text" th:field="*{doctorName}" readonly class="form-control" required/>
+            <div class="text-danger" th:if="${#fields.hasErrors('doctorName')}" th:errors="*{doctorName}"></div>
         </div>
 
-        <div class="form-check mb-3">
-            <input type="checkbox" th:field="*{personalDoc}" class="form-check-input" id="editPersonalDocCheck"/>
-            <label class="form-check-label" for="editPersonalDocCheck">Is Personal Doctor</label>
-        </div>
 
         <div class="mb-3">
             <label class="form-label">Specializations:</label>
             <select th:field="*{specializations}" multiple class="form-select" size="5">
                 <option th:each="spec : ${specializations}" th:value="${spec}" th:text="${spec}"></option>
             </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('specializations')}" th:errors="*{specializations}"></div>
         </div>
+
 
         <div class="mb-3">
             <label class="form-label">Doctor ID:</label>
             <input type="text" th:field="*{uniqueIdentifier}" readonly class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('uniqueIdentifier')}" th:errors="*{uniqueIdentifier}"></div>
         </div>
 
 
         <div class="mb-3">
             <label class="form-label">Username:</label>
             <input type="text" th:field="*{username}" readonly class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
         </div>
 
 

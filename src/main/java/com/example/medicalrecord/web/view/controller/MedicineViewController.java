@@ -7,8 +7,10 @@ import com.example.medicalrecord.service.MedicineService;
 import com.example.medicalrecord.util.MapperUtil;
 import com.example.medicalrecord.web.view.controller.model.CreateMedicineViewModel;
 import com.example.medicalrecord.web.view.controller.model.MedicineViewModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,7 +61,13 @@ public class MedicineViewController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public String createMedicine(@ModelAttribute("medicine") CreateMedicineViewModel viewModel) {
+    public String createMedicine(@Valid @ModelAttribute("medicine") CreateMedicineViewModel viewModel,
+                                 BindingResult bindingResult, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("medicine", viewModel);
+            return "medicines/create-medicine";
+        }
 
 
         CreateMedicineDto dto = mapperUtil.map(viewModel, CreateMedicineDto.class);
@@ -69,8 +77,11 @@ public class MedicineViewController {
 
     @PostMapping("/edit")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public String editMedicineSubmit(@ModelAttribute("medicine") MedicineViewModel viewModel) {
-
+    public String editMedicineSubmit(@Valid @ModelAttribute("medicine") MedicineViewModel viewModel,
+                                     BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return "medicines/edit-medicine";
+        }
 
         MedicineDto dto = mapperUtil.map(viewModel, MedicineDto.class);
         medicineService.updateMedicine(dto);

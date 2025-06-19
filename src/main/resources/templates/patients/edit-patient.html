@@ -41,6 +41,7 @@
 
         <!-- За DOCTOR -->
         <div th:if="${#authorization.expression('hasRole(''DOCTOR'')')}">
+            <label class="form-label ">Current Doctor:</label>
             <input type="hidden" th:field="*{personalDoctorId}" />
             <input type="text" class="form-control" th:value="${doctorName}" readonly />
         </div>

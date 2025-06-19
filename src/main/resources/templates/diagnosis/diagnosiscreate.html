@@ -13,12 +13,14 @@
   <form th:action="@{/diagnoses}" th:object="${diagnosis}" method="post">
     <div class="mb-3">
       <label for="diagnosisName" class="form-label">Diagnosis Name:</label>
-      <input type="text" id="diagnosisName" th:field="*{diagnosisName}" class="form-control" required/>
+      <input type="text" id="diagnosisName" th:field="*{diagnosisName}" class="form-control">
+      <div class = "text-danger" th:if = "${#fields.hasErrors('diagnosisName')}" th:errors = "*{diagnosisName}"></div>
     </div>
 
     <div class="mb-3">
       <label for="description" class="form-label">Description:</label>
-      <input type="text" id="description" th:field="*{description}" class="form-control" required/>
+      <input type="text" id="description" th:field="*{description}" class="form-control">
+      <div class = "text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
     </div>
 
     <div class="mb-3">
@@ -28,24 +30,18 @@
 
     <div class="mb-3">
       <label for="patientId" class="form-label">Patient:</label>
-      <select id="patientId" th:field="*{patientId}" class="form-select" required>
+      <select id="patientId" th:field="*{patientId}" class="form-select"
+              th:disabled="${#lists.isEmpty(patients)}" required>
+        <option value="" disabled selected>Select patient</option>
         <option th:each="p : ${patients}"
                 th:value="${p.id}"
                 th:text="${p.name + ' (EGN: ' + p.egn + ')'}">
           Dummy fallback
-
         </option>
-
-
-
-
       </select>
-
-
+      <div class="text-danger" th:if="${#fields.hasErrors('patientId')}" th:errors="*{patientId}"></div>
+      <div class="text-danger" th:if="${noPatientsError}" th:text="${noPatientsError}"></div>
     </div>
-
-
-
     <button type="submit" class="btn btn-primary">Create</button>
     <a th:href="@{/diagnoses}" class="btn btn-secondary ms-2">← Back to List</a>
   </form>

@@ -5,6 +5,7 @@ import com.example.medicalrecord.Exceptions.SoftDeleteException;
 import com.example.medicalrecord.data.repo.DoctorRepository;
 import com.example.medicalrecord.service.DoctorService;
 import com.example.medicalrecord.util.OwnershipUtil;
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -16,6 +17,7 @@ import com.example.medicalrecord.web.view.controller.model.CreateDiagnosisViewMo
 import com.example.medicalrecord.web.view.controller.model.DiagnosisViewModel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import com.example.medicalrecord.dto.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -91,8 +93,20 @@ public class DiagnosisViewController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
-    public String createDiagnosis(@ModelAttribute("diagnosis") CreateDiagnosisViewModel viewModel,
+    public String createDiagnosis(@ModelAttribute("diagnosis") @Valid CreateDiagnosisViewModel viewModel,
+                                  BindingResult bindingResult,
+                                  Model model,
                                   Authentication authentication) {
+
+        List<PatientDto> patients = isAdmin(authentication)
+                ? patientService.getAllActivePatients()
+                : patientService.getPatientsByDoctorId(getDoctorIdIfDoctor(authentication));
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("patients", patients);
+            return "diagnosis/diagnosiscreate";
+        }
+
         Long doctorId = getDoctorIdIfDoctor(authentication);
 
 
@@ -161,8 +175,14 @@ public class DiagnosisViewController {
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public String updateDiagnosis(@PathVariable Long id,
-                                  @ModelAttribute("diagnosis") CreateDiagnosisViewModel updateModel,
+                                  @ModelAttribute("diagnosis") @Valid CreateDiagnosisViewModel updateModel,
+                                  BindingResult bindingResult,
+                                  Model model,
                                   Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("id", id);
+            return "diagnosis/diagnosisedit";
+        }
         DiagnosisDto existing = diagnosisService.getDiagnosisById(id);
         Long doctorId = getDoctorIdIfDoctor(authentication);
 

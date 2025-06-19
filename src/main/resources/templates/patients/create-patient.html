@@ -12,10 +12,12 @@
         <div class="mb-3">
             <label for="patientName" class="form-label">Name:</label>
             <input type="text" th:field="*{patientName}" class="form-control" id="patientName"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('patientName')}" th:errors="*{patientName}"></div>
         </div>
         <div class="mb-3">
             <label for="egn" class="form-label">EGN:</label>
             <input type="text" th:field="*{egn}" class="form-control" id="egn"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('egn')}" th:errors="*{egn}"></div>
         </div>
         <div class="mb-3">
             <label for="paidInsurance" class="form-label">Paid Insurance Last 6 Months:</label>
@@ -43,6 +45,7 @@
         <div class="mb-3">
             <label for="username" class="form-label">Username (Keycloak)</label>
             <input type="text" th:field="*{username}" class="form-control" id="username"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
         </div>
 
 

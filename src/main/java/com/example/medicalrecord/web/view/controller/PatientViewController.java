@@ -12,12 +12,14 @@ import com.example.medicalrecord.util.MapperUtil;
 import com.example.medicalrecord.web.view.controller.model.CreatePatientViewModel;
 import com.example.medicalrecord.web.view.controller.model.PatientViewModel;
 import com.example.medicalrecord.web.view.controller.model.VisitViewModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -100,7 +102,14 @@ public class PatientViewController {
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
-    public String createPatient(@ModelAttribute("patient") CreatePatientViewModel viewModel) {
+    public String createPatient(@ModelAttribute("patient") @Valid CreatePatientViewModel viewModel,
+                                BindingResult bindingResult,
+                                Model model) {
+        if(bindingResult.hasErrors()){
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            return "patients/create-patient";
+        }
+
         CreatePatientDto dto = mapperUtil.map(viewModel, CreatePatientDto.class);
         patientService.createPatient(dto);
         return "redirect:/patients";
@@ -173,7 +182,15 @@ public class PatientViewController {
 
     @PostMapping("/edit")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public String submitPatient(@ModelAttribute("patient") CreatePatientViewModel viewModel, Authentication auth) {
+    public String submitPatient(@ModelAttribute("patient") @Valid CreatePatientViewModel viewModel,
+                                BindingResult  bindingResult,
+                                Model model,
+                                Authentication auth) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            model.addAttribute("doctorName", doctorService.getDoctorById(viewModel.getPersonalDoctorId()).getDoctorName());
+            return "patients/edit-patient";
+        }
         String username = auth.getName();
 
         boolean isDoctor = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));

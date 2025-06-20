@@ -12,21 +12,23 @@
     <form th:action="@{/sick-leaves/create}" th:object="${sickLeave}" method="post">
         <div class="mb-3">
             <label class="form-label">Start Date:</label>
-            <input type="date" th:field="*{startDate}" class="form-control" required />
+            <input type="date" th:field="*{startDate}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></div>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Duration (days):</label>
-            <input type="number" th:field="*{dayDuration}" class="form-control" min="1" required />
+            <input type="number" th:field="*{dayDuration}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('dayDuration')}" th:errors="*{dayDuration}"></div>
         </div>
 
         <div class="mb-3">
             <label class="form-label">Patient:</label>
-            <select th:field="*{patientId}" class="form-select" required>
+            <select th:field="*{patientId}" class="form-select">
                 <option value="">-- Select Patient --</option>
                 <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.name}"></option>
             </select>
-
+            <div class="text-danger" th:if="${#fields.hasErrors('patientId')}" th:errors="*{patientId}"></div>
         </div>
 
         <div class="mb-3">

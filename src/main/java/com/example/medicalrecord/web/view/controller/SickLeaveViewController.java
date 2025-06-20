@@ -12,15 +12,18 @@ import com.example.medicalrecord.util.MapperUtil;
 import com.example.medicalrecord.util.OwnershipUtil;
 import com.example.medicalrecord.web.view.controller.model.CreateSickLeaveViewModel;
 import com.example.medicalrecord.web.view.controller.model.SickLeaveViewModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.naming.Binding;
 import java.time.Month;
 import java.util.List;
 import java.util.Map;
@@ -84,12 +87,23 @@ public class SickLeaveViewController {
         return "sick-leaves/create-sick-leave";
     }
 
-
-
-
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public String createSickLeave(@ModelAttribute("sickLeave") CreateSickLeaveViewModel viewModel, Authentication authentication) {
+    public String createSickLeave(@ModelAttribute("sickLeave") @Valid CreateSickLeaveViewModel viewModel,
+                                  BindingResult bindingResult,
+                                  Model model,
+                                  Authentication authentication) {
+
+        if (bindingResult.hasErrors()) {
+            Long doctorId = viewModel.getIssuedById();
+            String doctorName = doctorService.getDoctorById(doctorId).getDoctorName();
+
+            List<PatientDto> patients = patientService.getAllActivePatients();
+            model.addAttribute("patients", patients);
+            model.addAttribute("doctorName", doctorName);
+
+            return  "sick-leaves/create-sick-leave";
+        }
         String username = ((OidcUser) authentication.getPrincipal()).getPreferredUsername();
 
         boolean isDoctor = authentication.getAuthorities().stream()
@@ -105,7 +119,6 @@ public class SickLeaveViewController {
                     .getId();
         } else {
 
-
             doctorId = viewModel.getIssuedById();
 
             if (doctorId == null) {
@@ -113,15 +126,11 @@ public class SickLeaveViewController {
             }
         }
 
-
-
         CreateSickLeaveDto dto = mapperUtil.map(viewModel, CreateSickLeaveDto.class);
         dto.setIssuedById(viewModel.getIssuedById());
         sickLeaveService.createSickLeave(dto);
         return "redirect:/sick-leaves";
     }
-
-
 
     @GetMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
@@ -161,10 +170,23 @@ public class SickLeaveViewController {
         return "sick-leaves/edit-sick-leave";
     }
 
-
     @PostMapping("/edit")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
-    public String submitSickLeave(@ModelAttribute("sickLeave") CreateSickLeaveViewModel viewModel, Authentication authentication) {
+    public String submitSickLeave(@ModelAttribute("sickLeave") @Valid CreateSickLeaveViewModel viewModel,
+                                  BindingResult bindingResult,
+                                  Model model,
+                                  Authentication authentication) {
+        if (bindingResult.hasErrors()) {
+            Long doctorId = viewModel.getIssuedById();
+            String doctorName = doctorService.getDoctorById(doctorId).getDoctorName();
+
+            List<PatientDto> patients = patientService.getAllActivePatients();
+            model.addAttribute("patients", patients);
+            model.addAttribute("doctorName", doctorName);
+
+            return "sick-leaves/edit-sick-leave";
+        }
+
         String username = ((OidcUser) authentication.getPrincipal()).getPreferredUsername();
 
         boolean isDoctor = authentication.getAuthorities().stream()
@@ -185,7 +207,6 @@ public class SickLeaveViewController {
             }
         }
 
-
         viewModel.setIssuedById(doctorId);
 
         CreateSickLeaveDto dto = mapperUtil.map(viewModel, CreateSickLeaveDto.class);
@@ -203,7 +224,6 @@ public class SickLeaveViewController {
 
         SickLeaveDto sickLeaveDto = sickLeaveService.getSickLeaveById(id);
 
-
         boolean isDoctor = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
         if (isDoctor) {
@@ -212,7 +232,6 @@ public class SickLeaveViewController {
                     doctor.getId(),
                     "You cannot delete another doctor's sick leave.");
         }
-
 
         try {
             sickLeaveService.deleteSickLeave(id);
@@ -223,7 +242,6 @@ public class SickLeaveViewController {
 
         return "redirect:/sick-leaves";
     }
-
 
     @GetMapping("/archived")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
@@ -241,7 +259,6 @@ public class SickLeaveViewController {
         model.addAttribute("sickLeaves", viewModels);
         return "sick-leaves/archived-sick-leaves";
     }
-
 
     @GetMapping("/doctor")
     @PreAuthorize("hasRole('DOCTOR')")
@@ -262,7 +279,6 @@ public class SickLeaveViewController {
         model.addAttribute("sickLeaves", viewModels);
         return "doctor/doc-sickleaves";
     }
-
 
     @PostMapping("/restore/{id}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
@@ -302,8 +318,6 @@ public class SickLeaveViewController {
         model.addAttribute("topDoctors", topDoctors);
         return "sick-leaves/top-doctors-by-sickleaves";
     }
-
-
 
 }
 

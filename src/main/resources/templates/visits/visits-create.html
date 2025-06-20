@@ -30,18 +30,40 @@
 
         <div class="mb-3">
             <label class="form-label">Doctor:</label>
-            <th:block th:each="doc : ${doctors}">
-                <input type="text" class="form-control"
-                       th:if="${doc.id == visit.doctorId}"
-                       th:value="${doc.doctorName}" readonly/>
-            </th:block>
-            <input type="hidden" th:field="*{doctorId}"/>
+
+            <div th:if="${isAdmin}">
+                <select th:field="*{doctorId}" class="form-select">
+                    <option value="">-- Select Doctor --</option>
+                    <option th:each="doc : ${doctors}"
+                            th:value="${doc.id}"
+                            th:text="${doc.doctorName}"
+                            th:selected="${doc.id == visit.doctorId}">
+                    </option>
+                </select>
+            </div>
+
+            <div th:unless="${isAdmin}">
+                <th:block th:each="doc : ${doctors}">
+                    <input type="text" class="form-control"
+                           th:if="${doc.id == visit.doctorId}"
+                           th:value="${doc.doctorName}" readonly/>
+                </th:block>
+                <input type="hidden" th:field="*{doctorId}"/>
+            </div>
+
+            <div class="text-danger" th:if="${#fields.hasErrors('doctorId')}" th:errors="*{doctorId}"></div>
         </div>
+
 
 
         <div class="mb-3">
             <label class="form-label">Date:</label>
-            <input type="date" th:field="*{localDate}" class="form-control"/>
+            <input type="date" th:field="*{localDate}" class="form-control" />
+
+
+            <div class="text-danger"
+                 th:if="${#fields.hasErrors('localDate')}"
+                 th:errors="*{localDate}"></div>
         </div>
 
         <div class="mb-3">
@@ -66,9 +88,11 @@
             <label class="form-label">Sick Leave:</label>
             <select th:field="*{sickLeaveId}" class="form-select">
                 <option value="">-- None --</option>
-                <option th:each="s : ${sickLeaves}" th:value="${s.id}"
-                        th:text="${s.startDate + ' – ' + s.dayDuration + ' days'}">
+                <option th:each="s : ${sickLeaves}"
+                        th:value="${s.id}"
+                        th:text="${#temporals.format(s.startDate, 'dd-MM-yyyy') + ' – ' + s.dayDuration + ' days'}">
                 </option>
+
             </select>
         </div>
 

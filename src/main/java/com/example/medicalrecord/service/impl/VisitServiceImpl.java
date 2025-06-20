@@ -67,6 +67,7 @@ public class VisitServiceImpl implements VisitService {
         }
 
         Visit saved = visitRepository.save(visit);
+        System.out.println("✔ Visit saved with doctorId = " + dto.getDoctorId());
         return mapperUtil.map(saved, VisitDto.class);
     }
 

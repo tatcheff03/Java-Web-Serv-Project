@@ -12,6 +12,7 @@
         <div class="mb-3">
             <label class="form-label">Instructions:</label>
             <input type="text" th:field="*{instructions}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('instructions')}" th:errors="*{instructions}"></div>
         </div>
 
         <div class="mb-3">
@@ -19,6 +20,7 @@
             <select th:field="*{medicationIds}" multiple class="form-control">
                 <option th:each="med : ${medicines}" th:value="${med.id}" th:text="${med.medicineName}"></option>
             </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('medicationIds')}" th:errors="*{medicationIds}"></div>
         </div>
 
         <div class="mb-3">
@@ -32,6 +34,7 @@
                 <option value="" disabled selected>-- Select Patient --</option>
                 <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.name}"></option>
             </select>
+            <div class="text-danger" th:if="${#fields.hasErrors('patientId')}" th:errors="*{patientId}"></div>
         </div>
 
 

@@ -9,11 +9,8 @@ import jakarta.annotation.PostConstruct;
 import com.example.medicalrecord.data.Enum.Specialization;
 import org.hibernate.Hibernate;
 import org.modelmapper.TypeMap;
-import org.hibernate.Hibernate;
 import org.springframework.stereotype.Component;
 import org.modelmapper.ModelMapper;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +30,40 @@ public class MapperUtil {
 
     public <S, D> void map(S source, D destination) {
         modelMapper.map(source, destination);
+    }
+
+    @PostConstruct
+    public void setupVisitMapping() {
+        modelMapper.createTypeMap(Visit.class, VisitDto.class)
+                .addMappings(mapper -> {
+                    mapper.map(Visit::getId, VisitDto::setId);
+                    mapper.map(Visit::getDoctor, VisitDto::setDoctor); // will override this
+                    mapper.map(Visit::getPatient, VisitDto::setPatient);
+                    mapper.map(Visit::getDiagnosis, VisitDto::setDiagnosis);
+                    mapper.map(Visit::getTreatment, VisitDto::setTreatment);
+                    mapper.map(Visit::getSickLeave, VisitDto::setSickLeave);
+                    mapper.map(Visit::getLocalDate, VisitDto::setLocalDate);
+                })
+                .setPostConverter(ctx -> {
+                    Visit source = ctx.getSource();
+                    VisitDto dest = ctx.getDestination();
+
+                    if (source.getDoctor() != null) {
+                        Hibernate.initialize(source.getDoctor());
+                        Doctor doctor = source.getDoctor();
+                        if (doctor != null && doctor.getId() != null) {
+                            Hibernate.initialize(doctor);
+                            dest.setDoctor(modelMapper.map(doctor, DoctorDto.class));
+                            System.out.println("🧪 MANUAL set: " + doctor.getDoctorName());
+                        } else {
+                            dest.setDoctor(null);
+                            System.out.println("❌ Doctor not set or missing ID");
+                        }
+
+                    }
+
+                    return dest;
+                });
     }
 
     @PostConstruct
@@ -60,9 +91,10 @@ public class MapperUtil {
                     .setPostConverter(ctx -> {
                         Doctor src = ctx.getSource();
                         DoctorDto dest = ctx.getDestination();
-                        dest.setDoctorName(src.getDoctorName());
-                        System.out.println("🧪 MANUAL set: " + dest.getDoctorName());
 
+                        if (src.getDoctorName() != null) {
+                            dest.setDoctorName(src.getDoctorName());
+                        }
                         return dest;
                     });
 
@@ -214,8 +246,6 @@ public class MapperUtil {
                             destination.setIssuedBy(dto);
 
 
-
-
                         }
 
 
@@ -358,7 +388,7 @@ public class MapperUtil {
                 mapper.map(TreatmentDto::getInstructions, TreatmentViewModel::setInstructions);
                 mapper.map(TreatmentDto::getIssuedBy, TreatmentViewModel::setIssuedByName);
                 mapper.map(TreatmentDto::getMedications, TreatmentViewModel::setMedications);
-                mapper.map(TreatmentDto::getPatient,  TreatmentViewModel::setPatientName);
+                mapper.map(TreatmentDto::getPatient, TreatmentViewModel::setPatientName);
 
 
             });
@@ -375,15 +405,16 @@ public class MapperUtil {
                 });
 
 
-                modelMapper.createTypeMap(Visit.class, VisitDto.class).addMappings(mapper -> {
-                    mapper.map(Visit::getId, VisitDto::setId);
-                    mapper.map(Visit::getDoctor, VisitDto::setDoctor);
-                    mapper.map(Visit::getPatient, VisitDto::setPatient);
-                    mapper.map(Visit::getDiagnosis, VisitDto::setDiagnosis);
-                    mapper.map(Visit::getTreatment, VisitDto::setTreatment);
-                    mapper.map(Visit::getSickLeave, VisitDto::setSickLeave);
-                    mapper.map(Visit::getLocalDate, VisitDto::setLocalDate);
-                });
+//                modelMapper.createTypeMap(Visit.class, VisitDto.class).addMappings(mapper -> {
+//                    mapper.map(Visit::getId, VisitDto::setId);
+//                    mapper.map(Visit::getDoctor, VisitDto::setDoctor);
+//                    mapper.map(Visit::getPatient, VisitDto::setPatient);
+//                    mapper.map(Visit::getDiagnosis, VisitDto::setDiagnosis);
+//                    mapper.map(Visit::getTreatment, VisitDto::setTreatment);
+//                    mapper.map(Visit::getSickLeave, VisitDto::setSickLeave);
+//                    mapper.map(Visit::getLocalDate, VisitDto::setLocalDate);
+//                });
+
 
                 modelMapper.createTypeMap(VisitDto.class, VisitViewModel.class).addMappings(mapper -> {
                     mapper.map(VisitDto::getId, VisitViewModel::setId);
@@ -393,7 +424,9 @@ public class MapperUtil {
                     mapper.map(VisitDto::getTreatment, VisitViewModel::setTreatment);
                     mapper.map(VisitDto::getSickLeave, VisitViewModel::setSickLeave);
                     mapper.map(VisitDto::getLocalDate, VisitViewModel::setLocalDate);
+
                 });
+
 
                 modelMapper.createTypeMap(CreateVisitViewModel.class, UpdateVisitDto.class).addMappings(mapper -> {
                     mapper.map(CreateVisitViewModel::getId, UpdateVisitDto::setId);

@@ -29,7 +29,7 @@
         <tr th:each="v : ${visits}">
             <td th:text="${v.localDate}"></td>
             <td th:text="${v.patient !=null ? v.patient.name:'N/A'}"></td>
-            <td th:text="${v.doctor !=null ? v.doctor.doctorName:'N/A'}"></td>
+            <td th:text="${ v.doctor?.doctorName}">Doctor</td>
             <td th:text="${v.diagnosis != null ? v.diagnosis.diagnosisName: 'N/A'}"></td>
             <td>
                 <a th:if="${v.id != null}"

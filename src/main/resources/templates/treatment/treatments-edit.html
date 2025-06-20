@@ -13,6 +13,7 @@
     <div class="mb-3">
       <label class="form-label">Instructions:</label>
       <input type="text" th:field="*{instructions}" class="form-control" required/>
+      <div class="text-danger" th:if="${#fields.hasErrors('instructions')}" th:errors="*{instructions}"></div>
     </div>
 
     <div class="mb-3">
@@ -24,6 +25,7 @@
                 th:selected="${medicines.contains(med.id)}">
         </option>
       </select>
+      <div class="text-danger" th:if="${#fields.hasErrors('medicationIds')}" th:errors="*{medicationIds}"></div>
     </div>
 
     <div class="mb-3">

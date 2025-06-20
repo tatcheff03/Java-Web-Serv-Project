@@ -16,7 +16,6 @@
                    th:value="${doctorName}"
                    readonly />
             <input type="hidden" th:field="*{doctorId}"/>
-
         </div>
         <div class="mb-3">
             <label class="form-label">Patient:</label>
@@ -24,10 +23,12 @@
                 <input type="text" class="form-control" readonly th:if="${p.id} == ${visit.patientId}"
                        th:value="${p.name}"/>
             </th:block>
+            <input type="hidden" th:field="*{patientId}" />
         </div>
         <div class="mb-3">
             <label class="form-label">Date:</label>
             <input type="date" th:field="*{localDate}" class="form-control"/>
+            <div class="text-danger" th:if="${#fields.hasErrors('localDate')}" th:errors="*{localDate}"></div>
         </div>
         <div class="mb-3">
             <label class="form-label">Diagnosis:</label>
@@ -53,7 +54,7 @@
                 <option value="">-- None --</option>
                 <option th:each="s : ${sickLeaves}"
                         th:value="${s.id}"
-                        th:text="${#temporals.format(s.startDate, 'yyyy-MM-dd') + ' – ' + s.dayDuration + ' days'}">
+                        th:text="${#temporals.format(s.startDate, 'dd-MM-yyyy') + ' – ' + s.dayDuration + ' days'}">
                 </option>
             </select>
         </div>

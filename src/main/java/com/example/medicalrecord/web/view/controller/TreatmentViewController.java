@@ -10,6 +10,7 @@ import com.example.medicalrecord.service.TreatmentService;
 import com.example.medicalrecord.web.view.controller.model.CreateTreatmentViewModel;
 import com.example.medicalrecord.web.view.controller.model.TreatmentViewModel;
 import com.example.medicalrecord.dto.*;
+import jakarta.validation.Valid;
 import org.springframework.ui.Model;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
@@ -96,11 +98,30 @@ public class TreatmentViewController {
 
     @PostMapping
     @PreAuthorize("hasRole('DOCTOR')")
-    public String createTreatment(@ModelAttribute("treatment") CreateTreatmentViewModel viewModel,
+    public String createTreatment(@Valid  @ModelAttribute("treatment") CreateTreatmentViewModel viewModel,
+                                  BindingResult bindingResult,
+                                  Model model,
                                   Authentication authentication) {
+
+
+
         String username = ((OidcUser) authentication.getPrincipal()).getPreferredUsername();
         Long doctorId = doctorService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Doctor not found")).getId();
+
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("medicines", medicineService.getAllMedicines());
+
+            List<PatientDto> patients = isAdmin
+                    ? patientService.getAllActivePatients()
+                    : patientService.getPatientsByDoctorId(doctorId);
+            model.addAttribute("patients", patients);
+
+            return "treatment/treatments-create";
+        }
 
         CreateTreatmentDto dto = new CreateTreatmentDto();
         dto.setInstructions(viewModel.getInstructions());
@@ -176,17 +197,41 @@ public class TreatmentViewController {
     @PostMapping("/edit/{id}")
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public String editTreatment(@PathVariable Long id,
-                                @ModelAttribute("treatment") CreateTreatmentViewModel viewModel,
+                                @Valid @ModelAttribute("treatment") CreateTreatmentViewModel viewModel,
+                                BindingResult bindingResult,
+                                Model model,
                                 Authentication authentication) {
-        TreatmentDto existing = treatmentService.getTreatmentById(id);
-        String username = ((OidcUser) authentication.getPrincipal()).getPreferredUsername();
 
-        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"))) {
+        String username = ((OidcUser) authentication.getPrincipal()).getPreferredUsername();
+        boolean isDoctor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
+
+        TreatmentDto existing = treatmentService.getTreatmentById(id);
+
+        if (isDoctor) {
             Long doctorId = doctorService.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("Doctor not found")).getId();
-
             OwnershipUtil.verifyOwnership(existing.getIssuedBy().getId(), doctorId,
                     "You cannot edit another doctor's treatment.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("medicines", medicineService.getAllMedicines());
+
+            List<PatientDto> patients = isDoctor
+                    ? patientService.getPatientsByDoctorId(
+                    doctorService.findByUsername(username).orElseThrow().getId())
+                    : patientService.getAllActivePatients();
+
+            model.addAttribute("patients", patients);
+            model.addAttribute("treatmentId", id);
+
+            patients.stream()
+                    .filter(p -> p.getId().equals(viewModel.getPatientId()))
+                    .findFirst()
+                    .ifPresent(p -> viewModel.setPatientName(p.getName()));
+
+            return "treatment/treatments-edit";
         }
 
         CreateTreatmentDto dto = new CreateTreatmentDto();

@@ -24,6 +24,11 @@
         <label class="form-label">End Date</label>
         <input type="date" name="endDate" class="form-control" required>
     </div>
+
+    <div class="col-12">
+        <div class="text-danger" th:if="${error}" th:text="${error}"></div>
+    </div>
+
     <div class="col-12">
         <button class="btn btn-primary mt-2">Show Visits</button>
     </div>

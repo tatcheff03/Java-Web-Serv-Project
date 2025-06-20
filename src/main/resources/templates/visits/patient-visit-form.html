@@ -19,6 +19,7 @@
                         th:text="${p.name + ' (EGN: ' + #strings.substring( p.egn,0 , 5) + '****' +  #strings.substring(p.egn, 9) +')'}">
                 </option>
             </select>
+            <div class="text-danger" th:if="${error}" th:text="${error}"></div>
         </div>
 
         <button type="submit" class="btn btn-primary">Show Visits</button>

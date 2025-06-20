@@ -5,17 +5,18 @@ import com.example.medicalrecord.util.MapperUtil;
 import com.example.medicalrecord.dto.*;
 import com.example.medicalrecord.web.view.controller.model.CreateVisitViewModel;
 import com.example.medicalrecord.web.view.controller.model.VisitViewModel;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import com.example.medicalrecord.service.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -35,7 +36,6 @@ public class VisitViewController {
     private final SickLeaveService sickLeaveService;
     private final MapperUtil mapperUtil;
 
-
     @GetMapping
     @PreAuthorize("hasAnyRole('DOCTOR', 'ADMIN')")
     public String listVisits(Model model, Authentication authentication) {
@@ -47,7 +47,6 @@ public class VisitViewController {
                 .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR")) && !isAdmin;
 
         List<VisitDto> allVisits = visitService.getAllVisits();
-
         List<VisitDto> filteredVisits;
 
         if (isDoctorOnly) {
@@ -69,7 +68,6 @@ public class VisitViewController {
         return "visits/visits-list";
     }
 
-
     @GetMapping("/create")
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     public String showCreateForm(@RequestParam(required = false) Long patientId,
@@ -80,13 +78,12 @@ public class VisitViewController {
 
         DoctorDto loggedInDoctor = doctorService.findByUsername(username).orElseThrow(() -> new RuntimeException("Doctor not found"));
         model.addAttribute("loggedInDoctorId", loggedInDoctor.getId());
-
-
-
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", isAdmin);
         if (patientId != null) {
             PatientDto patient = patientService.getPatientById(patientId);
-            boolean isAdmin = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+
             if (!isAdmin && !patient.getPersonalDoctor().getId().equals(loggedInDoctor.getId())) {
                 throw new AccessDeniedException("You cannot create a visit for a patient that is not yours.");
             }
@@ -112,20 +109,53 @@ public class VisitViewController {
 
     @PostMapping("/create")
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
-    public String createVisit(@ModelAttribute("visit") CreateVisitViewModel visitViewModel, Authentication authentication) {
+    public String createVisit(@Valid @ModelAttribute("visit") CreateVisitViewModel visitViewModel,
+                              BindingResult bindingResult,
+                              Model model,
+                              Authentication authentication) {
+
         String username = authentication.getName();
-        DoctorDto doctor = doctorService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        boolean isDoctor = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_DOCTOR"));
         boolean isAdmin = authentication.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
-        if (!isAdmin && !doctor.getId().equals(visitViewModel.getDoctorId())) {
-            throw new AccessDeniedException("You are not allowed to create a visit with another doctor.");
+
+        Long doctorId;
+
+        // 👨‍⚕️ If DOCTOR, force their own ID
+        if (isDoctor && !isAdmin) {
+            doctorId = doctorService.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("Doctor not found")).getId();
+            visitViewModel.setDoctorId(doctorId); // force override
+        } else {
+            doctorId = visitViewModel.getDoctorId();
+
+            if (doctorId == null) {
+                throw new IllegalArgumentException("Doctor ID is required for ADMIN users.");
+            }
+        }
+
+
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("isAdmin", isAdmin);
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            model.addAttribute("patients", patientService.getAllActivePatients());
+            model.addAttribute("diagnoses", diagnosisService.getAllDiagnosis());
+            model.addAttribute("treatments", treatmentService.getAllTreatments());
+            model.addAttribute("sickLeaves", visitViewModel.getPatientId() != null
+                    ? sickLeaveService.getAllSickLeavesByPatientId(visitViewModel.getPatientId())
+                    : new ArrayList<>());
+            return "visits/visits-create";
         }
 
         CreateVisitDto dto = mapperUtil.map(visitViewModel, CreateVisitDto.class);
+        dto.setDoctorId(doctorId);
+
         visitService.createVisit(dto);
         return "redirect:/visits";
     }
+
 
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     @GetMapping("/edit/{id}")
@@ -168,18 +198,38 @@ public class VisitViewController {
 
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     @PostMapping("/edit")
-    public String editVisit(@ModelAttribute("visit") CreateVisitViewModel viewModel, Authentication authentication) {
-        VisitDto existing = visitService.getVisitById(viewModel.getId());
+    public String editVisit(@Valid @ModelAttribute("visit") CreateVisitViewModel viewModel,
+                            BindingResult bindingResult,
+                            Model model,
+                            Authentication authentication) {
 
+        VisitDto existing = visitService.getVisitById(viewModel.getId());
         String username = authentication.getName();
+
         if (!existing.getDoctor().getUsername().equals(username)) {
             throw new AccessDeniedException("You are not allowed to update this visit.");
+        }
+
+        if (bindingResult.hasErrors()) {
+            viewModel.setDoctorId(existing.getDoctor().getId());
+            model.addAttribute("visit", viewModel);
+            model.addAttribute("doctorName", existing.getDoctor().getDoctorName());
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            model.addAttribute("patients", patientService.getAllActivePatients());
+            model.addAttribute("diagnoses", diagnosisService.getAllDiagnosis());
+            model.addAttribute("treatments", treatmentService.getAllTreatments());
+            model.addAttribute("sickLeaves", viewModel.getPatientId() != null
+                    ? sickLeaveService.getAllSickLeavesByPatientId(viewModel.getPatientId())
+                    : new ArrayList<>());
+
+            return "visits/visits-edit";
         }
 
         UpdateVisitDto dto = mapperUtil.map(viewModel, UpdateVisitDto.class);
         visitService.updateVisit(dto.getId(), dto);
         return "redirect:/visits";
     }
+
 
     @PreAuthorize("hasAnyRole('DOCTOR','ADMIN')")
     @GetMapping("/delete/{id}")
@@ -263,9 +313,15 @@ public class VisitViewController {
 
     @PostMapping("/report/by-patient")
     @PreAuthorize("hasAnyRole('ADMIN', 'DOCTOR')")
-    public String showVisitsForPatient(@RequestParam Long patientId, Model model) {
-        List<VisitViewModel> visits = visitService.getVisitsByPatientId(patientId);
+    public String showVisitsForPatient(@RequestParam(required = false) Long patientId, Model model) {
 
+        if (patientId == null) {
+            model.addAttribute("error", "Patient must be selected.");
+            model.addAttribute("patients", patientService.getAllActivePatients());
+            return "visits/patient-visit-form";
+        }
+
+        List<VisitViewModel> visits = visitService.getVisitsByPatientId(patientId);
 
         model.addAttribute("visits", visits);
         return "visits/patient-visit-result";
@@ -282,13 +338,21 @@ public class VisitViewController {
     public String showVisitsInPeriod(@RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
                                      @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
                                      Model model) {
+
+        if (start.isAfter(end)) {
+            model.addAttribute("error", "Start date must be before or equal to end date.");
+            model.addAttribute("startDate", start);
+            model.addAttribute("endDate", end);
+            return "visits/visit-period-form";
+        }
+
+
         List<VisitViewModel> visits = visitService.getVisitsBetweenDates(start, end);
         model.addAttribute("visits", visits);
         model.addAttribute("startDate", start);
         model.addAttribute("endDate", end);
         return "visits/visit-period-result";
     }
-
 
     @GetMapping("/report/by-doctor-and-period")
     @PreAuthorize("hasRole('ADMIN')")
@@ -299,10 +363,24 @@ public class VisitViewController {
 
     @PostMapping("/report/by-doctor-and-period")
     @PreAuthorize("hasRole('ADMIN')")
-    public String showVisitsByDoctorAndPeriod(@RequestParam Long doctorId,
+    public String showVisitsByDoctorAndPeriod(@RequestParam(required = false) Long doctorId,
                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                               @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                               Model model) {
+
+        if (doctorId == null) {
+            model.addAttribute("error", "Doctor must be selected.");
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            return "visits/visit-doctor-period-form";
+        }
+
+        if (startDate.isAfter(endDate)) {
+            model.addAttribute("error", "Start date must be before or equal to end date.");
+            model.addAttribute("doctors", doctorService.getAllDoctors());
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("endDate", endDate);
+            return "visits/visit-doctor-period-form";
+        }
 
         List<VisitViewModel> visits = visitService.getVisitsByDoctorAndPeriod(doctorId, startDate, endDate);
         model.addAttribute("visits", visits);

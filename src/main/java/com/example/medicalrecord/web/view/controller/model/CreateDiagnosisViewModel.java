@@ -13,7 +13,7 @@ public class CreateDiagnosisViewModel {
     @Size(max = 20, message = "Diagnosis name must not exceed 20 characters")
     private String diagnosisName;
     @NotBlank(message = "Description is required")
-    @Size(max = 40, message = "Description must not exceed 40 characters")
+    @Size(max = 80, message = "Description must not exceed 80 characters")
     private String description;
     @NotNull(message = "You must select a patient")
     private Long patientId;

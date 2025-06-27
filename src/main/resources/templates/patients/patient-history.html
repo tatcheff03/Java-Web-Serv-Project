@@ -20,7 +20,7 @@
             <th>Лекар</th>
             <th>Диагноза</th>
             <th>Лечение</th>
-            <th>Болничен</th>
+
         </tr>
         </thead>
         <tbody>
@@ -34,12 +34,7 @@
                     <li th:text="${visit.treatment.instructions}"></li>
                 </ul>
             </td>
-            <td>
-            <ul>
-            <li th:if="${visit.sickLeave != null}" th:text="${'Начална дата: ' + #temporals.format(visit.sickLeave.startDate, 'dd/MM/yyyy')}"></li>
-            <li th:if="${visit.sickLeave != null}" th:text="${'Крайна дата: ' + #temporals.format(visit.sickLeave.endDate, 'dd/MM/yyyy')}"></li>
-                    </ul>
-            </td>
+
         </tr>
         </tbody>
     </table>
